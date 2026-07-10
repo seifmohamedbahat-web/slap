@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxury Listings | Keeps It Real Estate — San Diego</title>
+<meta name="description" content="Browse luxury San Diego listings from Keeps It Real Estate — La Jolla, Del Mar, Rancho Santa Fe, Coronado and more.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1a3a'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='32' fill='%23d9dee6' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="listings">
+
+<header class="site-header">
+  <div class="container nav-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">K</span>
+      <span>Keeps It Real Estate<small>San Diego, California</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html" class="active">Listings</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="tel:16197876628" class="nav-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        (619) 787-6628
+      </a>
+      <a href="contact.html" class="btn btn-primary btn-sm">Get In Touch</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero page-hero">
+  <canvas class="hero-canvas" data-hero-scene="listings"></canvas>
+  <div class="hero-fade"></div>
+  <div class="hero-content container">
+    <div class="eyebrow hero-eyebrow">Portfolio</div>
+    <h1 class="hero-title" style="font-size:clamp(2.4rem,4.6vw,3.8rem);" data-split-words>Luxury Listings Across San Diego</h1>
+    <p class="lede hero-lede">Every property below is hand-selected and personally represented by Raul Lopez — from oceanfront estates to architectural showpieces.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="filter-bar reveal">
+      <button class="filter-chip active" data-filter="all">All Listings</button>
+      <button class="filter-chip" data-filter="For Sale">For Sale</button>
+      <button class="filter-chip" data-filter="Pending">Pending</button>
+      <button class="filter-chip" data-filter="Sold">Sold</button>
+    </div>
+    <p class="results-count reveal">Showing <strong>8</strong> hand-selected properties</p>
+    <div class="listing-grid" id="all-listings"></div>
+  </div>
+</section>
+
+<section class="section-alt">
+  <div class="container">
+    <div class="cta-banner reveal">
+      <div>
+        <h2>Don't See What You're Looking For?</h2>
+        <p>Raul has access to off-market and coming-soon listings across San Diego County before they hit the public market.</p>
+      </div>
+      <div class="hero-actions" style="margin:0;">
+        <a href="contact.html" class="btn btn-ghost-silver">Request a Private Search</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="brand" style="color:#fff; margin-bottom:14px; display:flex;">
+          <span class="brand-mark">K</span>
+          <span>Keeps It Real Estate</span>
+        </a>
+        <p>Luxury real estate services across San Diego County — La Jolla, Del Mar, Coronado, Rancho Santa Fe and beyond.</p>
+        <div class="social-row" style="margin-top:22px;">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V8h4v1.5A5 5 0 0 1 16 8Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="listings.html">Listings</a></li>
+          <li><a href="about.html">About Raul</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Neighborhoods</h5>
+        <ul>
+          <li><a href="listings.html">La Jolla</a></li>
+          <li><a href="listings.html">Del Mar</a></li>
+          <li><a href="listings.html">Coronado</a></li>
+          <li><a href="listings.html">Rancho Santa Fe</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:16197876628">(619) 787-6628</a></li>
+          <li><a href="mailto:hello@keepsitrealestate.com">hello@keepsitrealestate.com</a></li>
+          <li>San Diego, California</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Keeps It Real Estate · Raul Lopez. All rights reserved.</span>
+      <span>DRE License Available Upon Request</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/js/listings-data.js"></script>
+<script src="assets/js/reviews-data.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="assets/js/animations.js"></script>
+<script type="module" src="assets/js/scene-hero.js"></script>
+</body>
+</html>

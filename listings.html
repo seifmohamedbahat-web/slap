@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luxury Listings | Keeps It Real Estate — San Diego</title>
-<meta name="description" content="Browse luxury San Diego listings from Keeps It Real Estate — La Jolla, Del Mar, Rancho Santa Fe, Coronado and more.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1a3a'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='32' fill='%23d9dee6' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Listings | Keeps It Real Estate — San Diego, CA</title>
+<meta name="description" content="Browse 8 signature San Diego listings from Keeps It Real Estate, led by Raul Lopez. Call (619) 787-6628.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1730'/%3E%3Cpath d='M18 44V20l14-8 14 8v24' fill='none' stroke='%23D6DADF' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/style.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three.module.min.js" } }
+</script>
 </head>
 <body data-page="listings">
 
@@ -30,44 +31,56 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         (619) 787-6628
       </a>
-      <a href="contact.html" class="btn btn-primary btn-sm">Get In Touch</a>
+      <a href="contact.html" class="btn btn-primary btn-sm" data-magnetic>Get In Touch</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-<section class="hero page-hero">
-  <canvas class="hero-canvas" data-hero-scene="listings"></canvas>
-  <div class="hero-fade"></div>
-  <div class="hero-content container">
-    <div class="eyebrow hero-eyebrow">Portfolio</div>
-    <h1 class="hero-title" style="font-size:clamp(2.4rem,4.6vw,3.8rem);" data-split-words>Luxury Listings Across San Diego</h1>
-    <p class="lede hero-lede">Every property below is hand-selected and personally represented by Raul Lopez — from oceanfront estates to architectural showpieces.</p>
+<section class="page-hero" style="position:relative; overflow:clip;">
+  <div class="blueprint-grid"></div>
+  <div class="container reveal" style="position:relative;">
+    <div class="eyebrow">8 Signature Addresses</div>
+    <h1 data-split-hero style="color:var(--navy-950);">Current San Diego<br>Listings</h1>
+    <p class="lede">From cliffside La Jolla estates to bayfront Coronado manors — filter by neighborhood or status, or select any property for full details.</p>
   </div>
 </section>
 
 <section class="section-tight">
   <div class="container">
-    <div class="filter-bar reveal">
+    <div class="filter-bar" id="filter-bar">
       <button class="filter-chip active" data-filter="all">All Listings</button>
       <button class="filter-chip" data-filter="For Sale">For Sale</button>
       <button class="filter-chip" data-filter="Pending">Pending</button>
       <button class="filter-chip" data-filter="Sold">Sold</button>
+      <button class="filter-chip" data-filter="La Jolla">La Jolla</button>
+      <button class="filter-chip" data-filter="Del Mar">Del Mar</button>
+      <button class="filter-chip" data-filter="Rancho Santa Fe">Rancho Santa Fe</button>
+      <button class="filter-chip" data-filter="Coronado">Coronado</button>
+      <button class="filter-chip" data-filter="Point Loma">Point Loma</button>
+      <button class="filter-chip" data-filter="Carmel Valley">Carmel Valley</button>
+      <button class="filter-chip" data-filter="Encinitas">Encinitas</button>
+      <button class="filter-chip" data-filter="Solana Beach">Solana Beach</button>
     </div>
-    <p class="results-count reveal">Showing <strong>8</strong> hand-selected properties</p>
-    <div class="listing-grid" id="all-listings"></div>
+    <div class="results-count" id="results-count">Showing 8 of 8 properties</div>
+    <div style="position:relative;" id="grid-wrap">
+      <canvas id="listings-canvas" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
+      <div class="listing-grid" id="listing-grid"></div>
+    </div>
   </div>
 </section>
 
-<section class="section-alt">
+<div id="modal-root"></div>
+
+<section class="section-navy">
   <div class="container">
-    <div class="cta-banner reveal">
+    <div class="cta-banner reveal" style="background:none; box-shadow:none; padding:0;">
       <div>
-        <h2>Don't See What You're Looking For?</h2>
-        <p>Raul has access to off-market and coming-soon listings across San Diego County before they hit the public market.</p>
+        <h2>Don't See the Right Fit?</h2>
+        <p>Many of San Diego's finest homes trade off-market. Tell Raul what you're looking for and he'll go find it.</p>
       </div>
       <div class="hero-actions" style="margin:0;">
-        <a href="contact.html" class="btn btn-ghost-silver">Request a Private Search</a>
+        <a href="contact.html" class="btn btn-primary" data-magnetic>Request an Off-Market Search</a>
       </div>
     </div>
   </div>
@@ -117,17 +130,14 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Keeps It Real Estate · Raul Lopez. All rights reserved.</span>
-      <span>DRE License Available Upon Request</span>
+      <span>DRE License Available Upon Request — Placeholder</span>
     </div>
   </div>
 </footer>
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/js/listings-data.js"></script>
-<script src="assets/js/reviews-data.js"></script>
-<script src="assets/js/render.js"></script>
-<script src="assets/js/animations.js"></script>
-<script type="module" src="assets/js/scene-hero.js"></script>
+<script src="assets/vendor/SplitText.min.js"></script>
+<script type="module" src="assets/js/page-listings.js"></script>
 </body>
 </html>

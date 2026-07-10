@@ -1,7 +1,43 @@
 /* Procedural blueprint elevation drawings.
-   Every listing photo in this build is a placeholder — a hand-drafted
+   Listings without client-supplied photography fall back to a hand-drafted
    architectural elevation generated in the brand's own visual language,
-   standing in for real listing photography the client will supply. */
+   clearly marked as a placeholder for the client's real listing photos. */
+import * as THREE from 'three';
+
+const textureLoader = new THREE.TextureLoader();
+const textureCache = new Map();
+
+/* CSS background-size:cover equivalent — crops rather than stretches a
+   photo whose aspect ratio doesn't match the target plane. */
+function applyCoverFit(texture, targetAspect) {
+  const img = texture.image;
+  if (!img || !img.width) return;
+  const imgAspect = img.width / img.height;
+  if (imgAspect > targetAspect) {
+    texture.repeat.set(targetAspect / imgAspect, 1);
+    texture.offset.set((1 - targetAspect / imgAspect) / 2, 0);
+  } else {
+    texture.repeat.set(1, imgAspect / targetAspect);
+    texture.offset.set(0, (1 - imgAspect / targetAspect) / 2);
+  }
+  texture.needsUpdate = true;
+}
+
+/* Returns a live THREE.Texture for a listing: the client-supplied photo
+   when present (cover-fit to targetAspect), otherwise the procedural
+   blueprint elevation. */
+export function getListingTexture(listing, targetAspect = 4 / 3) {
+  if (textureCache.has(listing.id)) return textureCache.get(listing.id);
+  let texture;
+  if (listing.photo) {
+    texture = textureLoader.load(listing.photo, (tex) => applyCoverFit(tex, targetAspect));
+  } else {
+    texture = new THREE.CanvasTexture(getElevationCanvas(listing.id));
+  }
+  texture.colorSpace = THREE.SRGBColorSpace;
+  textureCache.set(listing.id, texture);
+  return texture;
+}
 
 function mulberry32(seed) {
   return function () {

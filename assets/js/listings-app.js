@@ -3,7 +3,7 @@
    the property detail modal. */
 import { THREE, makeRenderer, watchResize, runLoop, REDUCED_MOTION } from './webgl-base.js';
 import { createDistortionMaterial } from './distortion-material.js';
-import { getElevationCanvas } from './elevations.js';
+import { getElevationCanvas, getListingTexture } from './elevations.js';
 import { LISTINGS } from './listings-data.js';
 import { registerPreloadToken } from './core.js';
 
@@ -53,8 +53,7 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
     planeMap.forEach(({ mesh }) => scene.remove(mesh));
     planeMap.clear();
     LISTINGS.forEach((l) => {
-      const texture = new THREE.CanvasTexture(getElevationCanvas(l.id));
-      texture.colorSpace = THREE.SRGBColorSpace;
+      const texture = getListingTexture(l, 4 / 3);
       const material = createDistortionMaterial(texture, { rounded: true, radius: 12, width: 100, height: 100 });
       const geo = new THREE.PlaneGeometry(1, 1, 20, 14);
       const mesh = new THREE.Mesh(geo, material);
@@ -178,11 +177,16 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
 
   function openModal(listing, trigger) {
     lastFocused = trigger || document.activeElement;
-    const canvas2d = getElevationCanvas(listing.id);
     modalMedia.querySelectorAll('img').forEach(n => n.remove());
     const img = document.createElement('img');
-    img.src = canvas2d.toDataURL('image/jpeg', 0.9);
-    img.alt = listing.title + ' — placeholder elevation, replace with listing photography';
+    if (listing.photo) {
+      img.src = listing.photo;
+      img.alt = listing.title;
+    } else {
+      const canvas2d = getElevationCanvas(listing.id);
+      img.src = canvas2d.toDataURL('image/jpeg', 0.9);
+      img.alt = listing.title + ' — placeholder elevation, replace with listing photography';
+    }
     modalMedia.insertBefore(img, modalMedia.firstChild);
 
     modalBody.innerHTML = `

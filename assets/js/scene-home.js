@@ -1,7 +1,7 @@
 /* Home page — "Blueprint to Skyline" hero + pinned gallery dolly. */
 import { THREE, DEVICE_TIER, REDUCED_MOTION, makeRenderer, sizeToParent, watchResize, runLoop } from './webgl-base.js';
 import { createDistortionMaterial } from './distortion-material.js';
-import { getElevationCanvas } from './elevations.js';
+import { getListingTexture } from './elevations.js';
 import { LISTINGS } from './listings-data.js';
 import { registerPreloadToken } from './core.js';
 
@@ -125,9 +125,9 @@ export function initGalleryDolly(section, canvas, captionRoot) {
   scene.add(new THREE.AmbientLight(0xffffff, 1));
 
   const spacing = 14;
+  const planeAspect = 9.5 / 6.4;
   const planes = LISTINGS.map((listing, i) => {
-    const texture = new THREE.CanvasTexture(getElevationCanvas(listing.id));
-    texture.colorSpace = THREE.SRGBColorSpace;
+    const texture = getListingTexture(listing, planeAspect);
     const material = createDistortionMaterial(texture);
     const geo = new THREE.PlaneGeometry(9.5, 6.4, 24, 16);
     const mesh = new THREE.Mesh(geo, material);

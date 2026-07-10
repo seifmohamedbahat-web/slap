@@ -1,7 +1,12 @@
 /* Placeholder listing data — prices, specs, and copy are illustrative only.
-   Replace every field with real MLS data before launch. Photography is
-   replaced by procedurally-drafted elevation art (see elevations.js) since
-   no listing photography was supplied for this build. */
+   Replace every field with real MLS data before launch.
+
+   5 of the 8 listings now use client-supplied photography (`photo` field).
+   Note: these photos depict other properties (not the San Diego addresses
+   named below) supplied for this build — swap in real on-location photos
+   of each actual listing before launch. The remaining 3 listings still use
+   procedurally-drafted blueprint elevation art (see elevations.js) since no
+   photography was supplied for them. */
 export const LISTINGS = [
   {
     id: 'la-jolla-crest',
@@ -12,7 +17,8 @@ export const LISTINGS = [
     location: 'La Jolla, San Diego, CA',
     beds: 6, baths: 7, sqft: 7820,
     tags: ['Ocean View', 'Infinity Pool', 'Smart Home'],
-    blurb: 'A cliffside placeholder listing with walls of glass framing the Pacific, a chef’s kitchen, and a resort-style terrace built for entertaining.',
+    photo: 'assets/img/listings/la-jolla-crest.webp',
+    blurb: 'A cliffside estate with walls of glass framing the Pacific, a chef’s kitchen, and a resort-style terrace built for entertaining.',
   },
   {
     id: 'del-mar-shoreline',
@@ -34,7 +40,8 @@ export const LISTINGS = [
     location: 'Rancho Santa Fe, CA',
     beds: 7, baths: 9, sqft: 11300,
     tags: ['Guest House', 'Equestrian Ready', 'Motor Court'],
-    blurb: 'Gated grounds and a placeholder residence description built to museum-quality standards on nearly two private acres.',
+    photo: 'assets/img/listings/rancho-santa-fe-estate.webp',
+    blurb: 'Gated grounds and a residence built to museum-quality standards on nearly two private acres.',
   },
   {
     id: 'coronado-waterfront',
@@ -56,7 +63,8 @@ export const LISTINGS = [
     location: 'Point Loma, San Diego, CA',
     beds: 5, baths: 5, sqft: 5410,
     tags: ['Panoramic View', 'Rooftop Deck', 'Chef’s Kitchen'],
-    blurb: 'Sculptural placeholder architecture and disappearing glass walls open to sweeping views of the bay and downtown skyline.',
+    photo: 'assets/img/listings/point-loma-modern.webp',
+    blurb: 'Sculptural architecture and expansive glass open to sweeping views of the bay and downtown skyline.',
   },
   {
     id: 'carmel-valley-estate',
@@ -78,7 +86,8 @@ export const LISTINGS = [
     location: 'Encinitas, CA',
     beds: 4, baths: 4, sqft: 4380,
     tags: ['Near Beach', 'Vaulted Ceilings', 'Outdoor Kitchen'],
-    blurb: 'Bright, airy placeholder interiors and premium designer finishes close to the sand.',
+    photo: 'assets/img/listings/encinitas-modern-farmhouse.png',
+    blurb: 'Bright, airy interiors and premium designer finishes close to the sand.',
   },
   {
     id: 'solana-beach-hillside',
@@ -89,6 +98,7 @@ export const LISTINGS = [
     location: 'Solana Beach, CA',
     beds: 5, baths: 6, sqft: 6720,
     tags: ['Ocean View', 'Pool & Spa', 'Guest Suite'],
-    blurb: 'Perched above the coastline, this placeholder villa description implies uninterrupted ocean views and refined living.',
+    photo: 'assets/img/listings/solana-beach-hillside.webp',
+    blurb: 'Perched above the coastline, this villa delivers ocean views and refined indoor-outdoor living around the pool and spa.',
   },
 ];

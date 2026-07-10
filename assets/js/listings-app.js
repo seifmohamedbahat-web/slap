@@ -15,7 +15,8 @@ const specIcon = {
 
 function tileHTML(l) {
   return `
-    <div class="listing-tile" data-id="${l.id}" data-neighborhood="${l.neighborhood}" data-status="${l.status}">
+    <div class="listing-tile" data-id="${l.id}" data-neighborhood="${l.neighborhood}" data-status="${l.status}"
+         tabindex="0" role="button" aria-haspopup="dialog" aria-label="View details for ${l.title}, ${l.price}">
       <div class="listing-media" data-media="${l.id}">
         <span class="listing-tag">${l.status}</span>
         <span class="listing-price spec">${l.price}</span>
@@ -162,9 +163,9 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = `
-    <div class="modal-card">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-media">
-        <button class="modal-close" aria-label="Close">&times;</button>
+        <button class="modal-close" aria-label="Close dialog">&times;</button>
       </div>
       <div class="modal-body"></div>
     </div>`;
@@ -172,8 +173,11 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
   const modalCard = overlay.querySelector('.modal-card');
   const modalMedia = overlay.querySelector('.modal-media');
   const modalBody = overlay.querySelector('.modal-body');
+  const closeBtn = overlay.querySelector('.modal-close');
+  let lastFocused = null;
 
-  function openModal(listing) {
+  function openModal(listing, trigger) {
+    lastFocused = trigger || document.activeElement;
     const canvas2d = getElevationCanvas(listing.id);
     modalMedia.querySelectorAll('img').forEach(n => n.remove());
     const img = document.createElement('img');
@@ -182,7 +186,7 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
     modalMedia.insertBefore(img, modalMedia.firstChild);
 
     modalBody.innerHTML = `
-      <div class="modal-price spec">${listing.price}</div>
+      <h2 id="modal-title" class="modal-price spec">${listing.price}</h2>
       <div class="modal-loc">${listing.location}</div>
       <div class="modal-specs">
         <div><strong>${listing.beds}</strong><span>Beds</span></div>
@@ -201,22 +205,44 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
     gsap.to(overlay, { opacity: 1, duration: 0.35, ease: 'power2.out' });
     gsap.fromTo(modalCard, { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'power3.out' });
     document.body.style.overflow = 'hidden';
+    closeBtn.focus();
   }
   function closeModal() {
     gsap.to(modalCard, { scale: 0.94, opacity: 0, duration: 0.3, ease: 'power2.in' });
     gsap.to(overlay, {
       opacity: 0, duration: 0.3, ease: 'power2.in',
-      onComplete: () => { overlay.classList.remove('is-open'); document.body.style.overflow = ''; },
+      onComplete: () => {
+        overlay.classList.remove('is-open');
+        document.body.style.overflow = '';
+        if (lastFocused) lastFocused.focus();
+      },
     });
   }
 
-  gridEl.addEventListener('click', (e) => {
+  function triggerFromEvent(e) {
     const tile = e.target.closest('.listing-tile');
     if (!tile) return;
     const listing = LISTINGS.find(l => l.id === tile.dataset.id);
-    if (listing) openModal(listing);
+    if (listing) openModal(listing, tile);
+  }
+  gridEl.addEventListener('click', triggerFromEvent);
+  gridEl.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.listing-tile')) {
+      e.preventDefault();
+      triggerFromEvent(e);
+    }
   });
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-  overlay.querySelector('.modal-close').addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  closeBtn.addEventListener('click', closeModal);
+  window.addEventListener('keydown', (e) => {
+    if (!overlay.classList.contains('is-open')) return;
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key === 'Tab') {
+      const focusables = modalCard.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
 }

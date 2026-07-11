@@ -19,7 +19,7 @@ export type DiscoveredCompany = {
   logoUrl?: string | null;
   googleRating?: number | null;
   reviewCount?: number | null;
-  source: "APOLLO" | "GOOGLE_MAPS" | "MANUAL";
+  source: "FACEBOOK" | "YELP" | "MANUAL";
 };
 
 export type VerificationResult = {

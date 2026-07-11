@@ -32,7 +32,7 @@ async function domainRespondsLive(domain: string): Promise<boolean> {
 /**
  * Confirms a candidate truly has no website before it's allowed into the CRM.
  * Two independent checks must both pass:
- *   1. The source listing (Apollo / directory) reports no website_url/domain.
+ *   1. The source listing (scraped directory result) reports no website_url/domain.
  *   2. A live probe of the most likely domain guesses (name.com/.net/.co)
  *      returns no response — i.e. nothing is actually hosted there.
  * Any confirmed website from either check rejects the lead immediately.

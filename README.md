@@ -6,15 +6,16 @@ optional admin dashboard for them — all tracked in a CRM with agency analytics
 and a human-approval gate before any outreach goes out.
 
 This is a working prototype of the full pipeline described in the project spec,
-scoped to run end-to-end without requiring paid API keys, while being structured
-so real integrations (Apollo, Claude, Resend, Postgres/Supabase) drop in cleanly.
+scoped to run end-to-end without requiring paid API keys or third-party lead-gen
+services, while being structured so real integrations (Claude, Resend,
+Postgres/Supabase) drop in cleanly.
 
 ## What's real vs. what needs a key
 
 | Piece | Without any keys | With a key |
 |---|---|---|
-| Lead discovery | Curated sample of realistic "no website" local businesses | `APOLLO_API_KEY` → real Apollo organization search, filtered to `website_url` empty |
-| No-website verification | **Always real** — every lead also gets a live HTTP probe of `name.com` / `.net` / `.co` before being accepted | same |
+| Lead discovery | **Always real, no key needed** — AVEXA's own scraper (`lib/integrations/scraper.ts`) searches Facebook and Yelp listings via DuckDuckGo's HTML search endpoint. Falls back to a small curated sample only if that search host is unreachable from wherever this is running. | — |
+| No-website verification | **Always real** — every candidate also gets a live HTTP probe of `name.com` / `.net` / `.co` before being accepted, independent of how it was discovered | same |
 | Business analysis / lead scoring / outreach copy | Deterministic heuristics + templates | `ANTHROPIC_API_KEY` → Claude generates the profile, score reasoning, and outreach copy |
 | Outreach sending | Simulated send (message still moves DRAFT → APPROVED → SENT in the CRM) | `RESEND_API_KEY` → actually delivers the email |
 | Database | SQLite (`dev.db`) via a Prisma driver adapter | Point `DATABASE_URL` at Postgres (e.g. Supabase) — schema is Postgres-compatible, no code changes needed |
@@ -47,8 +48,10 @@ app/
 lib/
   pipeline/        discover, verifyNoWebsite, analyzeBusiness, qualify,
                    generateWebsite, generateBooking, generateDashboard, outreach
-  integrations/    apollo.ts, anthropic.ts, resend.ts — real REST clients with
-                   template fallbacks when a key isn't configured
+  integrations/    scraper.ts (self-built lead discovery, no third-party
+                   lead-gen API), sampleLeads.ts (offline fallback),
+                   anthropic.ts, resend.ts — real clients with template
+                   fallbacks when a key isn't configured
   db/client.ts     Prisma client (SQLite adapter for dev)
 prisma/schema.prisma  CRM data model: Lead, BusinessProfile, LeadScore,
                       WebsiteProject, BookingSystem, AdminDashboardProject,
@@ -60,13 +63,26 @@ Every pipeline stage writes an `ActivityEvent`, which powers the live activity
 feed and gives an audit trail of exactly what the AI did and why (see
 `reasoning` on `LeadScore` and `summary` on `BusinessProfile`).
 
+### Lead discovery
+
+`lib/integrations/scraper.ts` is AVEXA's own discovery tool — it queries
+DuckDuckGo's no-JS HTML search endpoint (a static results page, no API key or
+account) for `site:facebook.com` and `site:yelp.com/biz` listings matching an
+industry + location keyword, and parses candidate business names out of the
+result titles. It never calls a paid lead-gen API. If that search host is
+unreachable, `lib/pipeline/discover.ts` falls back to
+`lib/integrations/sampleLeads.ts`, a small curated sample, so the rest of the
+pipeline stays demoable — the discovery API response includes `usedFallback`
+so the UI can say so.
+
 ### No-website verification
 
-A lead is only ever saved if **two independent checks** both agree there's no
-website: the source listing has no `website_url`/domain, *and* a live HEAD
-request to the most likely domain guesses (`businessname.com/.net/.co`) gets no
-response. Anything that fails either check is rejected and logged, never stored
-as a lead — see `lib/pipeline/verifyNoWebsite.ts`.
+A candidate is only ever saved as a lead if **two independent checks** both
+agree there's no website: the scraper found no site of its own in the search
+results, *and* a live HEAD request to the most likely domain guesses
+(`businessname.com/.net/.co`) gets no response. Anything that fails either
+check is rejected and logged, never stored as a lead — see
+`lib/pipeline/verifyNoWebsite.ts`.
 
 ## Setup
 
@@ -84,8 +100,16 @@ Then open:
 - `/dashboard/leads/[id]` — a seeded lead with score, profile, and outreach draft
 - `/preview/[slug]` — that lead's generated website (e.g. `/preview/bright-smile-family-dental-dallas`)
 
-To use real data/AI instead of the built-in fallbacks, fill in `APOLLO_API_KEY`,
-`ANTHROPIC_API_KEY`, and/or `RESEND_API_KEY` in `.env` — no code changes needed.
+Lead discovery works out of the box — no key required. To use Claude for
+analysis/scoring/outreach copy and to actually deliver outreach emails, fill in
+`ANTHROPIC_API_KEY` and/or `RESEND_API_KEY` in `.env` — no code changes needed.
+
+> **Note on sandboxed/locked-down networks:** the scraper needs outbound HTTPS
+> to `html.duckduckgo.com`. Some sandboxes/CI runners restrict egress to an
+> allowlist that doesn't include general web hosts — there, discovery will log
+> `usedFallback: true` and use the local sample every time. This is a network
+> policy limitation of that environment, not a bug; it works normally on a
+> regular machine, CI runner, or hosting platform (e.g. Vercel).
 
 ## Brand
 
@@ -96,9 +120,10 @@ properties in `app/globals.css` and consumed as Tailwind utilities (`bg-avexa-*`
 
 ## Not in this build
 
-Live per-lead deployment to Vercel/GitHub, Google Maps/Facebook/Instagram
-scraping (Apollo is the wired discovery source), SMS/DM sending, Supabase Auth
-and role-based access control, and n8n workflow orchestration are out of scope
-for this pass. The pipeline and data model are structured so each can be added
-without restructuring what's here — e.g. swap `lib/integrations/apollo.ts`'s
-search for a Maps/Places call, or add a deploy step after `generateWebsite`.
+Live per-lead deployment to Vercel/GitHub, Google Maps/Instagram/Yellow Pages/
+Apple Maps/Bing Places scraping (Facebook and Yelp are the two wired discovery
+sources), SMS/DM sending, Supabase Auth and role-based access control, and n8n
+workflow orchestration are out of scope for this pass. The pipeline and data
+model are structured so each can be added without restructuring what's here —
+e.g. add another `find*Candidates` function to `lib/integrations/scraper.ts`
+for another directory, or add a deploy step after `generateWebsite`.

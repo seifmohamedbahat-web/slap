@@ -12,7 +12,8 @@ async function main() {
   console.log("Running discovery...");
   const discovery = await runDiscovery({});
   console.log(
-    `Discovered ${discovery.discovered}, verified ${discovery.verified}, rejected ${discovery.rejected}`
+    `Discovered ${discovery.discovered}, verified ${discovery.verified}, rejected ${discovery.rejected}` +
+      (discovery.usedFallback ? " (live search unreachable — used local sample)" : "")
   );
 
   const leads = await prisma.lead.findMany({ orderBy: { createdAt: "asc" } });

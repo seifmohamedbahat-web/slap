@@ -9,9 +9,12 @@ export function DiscoverForm() {
   const [industry, setIndustry] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ discovered: number; verified: number; rejected: number } | null>(
-    null
-  );
+  const [result, setResult] = useState<{
+    discovered: number;
+    verified: number;
+    rejected: number;
+    usedFallback: boolean;
+  } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,17 +66,24 @@ export function DiscoverForm() {
       </form>
 
       {result && (
-        <div className="mt-5 flex gap-6 border-t border-avexa-border pt-4 text-sm">
-          <span>
-            <span className="font-semibold">{result.discovered}</span>{" "}
-            <span className="text-avexa-fg-muted">candidates scanned</span>
-          </span>
-          <span className="text-avexa-success">
-            <span className="font-semibold">{result.verified}</span> verified no-website
-          </span>
-          <span className="text-avexa-error">
-            <span className="font-semibold">{result.rejected}</span> rejected (has website)
-          </span>
+        <div className="mt-5 space-y-2 border-t border-avexa-border pt-4">
+          <div className="flex gap-6 text-sm">
+            <span>
+              <span className="font-semibold">{result.discovered}</span>{" "}
+              <span className="text-avexa-fg-muted">candidates scanned</span>
+            </span>
+            <span className="text-avexa-success">
+              <span className="font-semibold">{result.verified}</span> verified no-website
+            </span>
+            <span className="text-avexa-error">
+              <span className="font-semibold">{result.rejected}</span> rejected (has website)
+            </span>
+          </div>
+          {result.usedFallback && (
+            <p className="text-xs text-avexa-warning">
+              Live search was unreachable — used the local sample dataset instead.
+            </p>
+          )}
         </div>
       )}
     </div>

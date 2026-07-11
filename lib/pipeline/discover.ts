@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/client";
-import { searchNoWebsiteCompanies } from "@/lib/integrations/apollo";
+import { findCandidateBusinesses } from "@/lib/integrations/scraper";
+import { sampleCandidates } from "@/lib/integrations/sampleLeads";
 import { verifyNoWebsite } from "@/lib/pipeline/verifyNoWebsite";
 import { LeadSource, LeadStatus } from "@/app/generated/prisma/enums";
 import type { DiscoveredCompany } from "@/lib/types";
@@ -14,30 +15,38 @@ function slugify(name: string, city?: string | null): string {
 
 function mapSource(source: DiscoveredCompany["source"]): LeadSource {
   switch (source) {
-    case "APOLLO":
-      return LeadSource.APOLLO;
-    case "GOOGLE_MAPS":
-      return LeadSource.GOOGLE_MAPS;
+    case "FACEBOOK":
+      return LeadSource.FACEBOOK;
+    case "YELP":
+      return LeadSource.YELP;
     default:
       return LeadSource.MANUAL;
   }
 }
 
 /**
- * Runs one discovery pass: searches for candidate businesses, verifies each
- * one has no website through multiple signals, and persists only the leads
- * that survive verification. Rejected leads are logged (not stored as leads)
- * so the reason is auditable.
+ * Runs one discovery pass: searches for candidate businesses using AVEXA's
+ * own scraper (lib/integrations/scraper.ts — no third-party lead-gen API),
+ * verifies each one has no website through an independent domain probe, and
+ * persists only the leads that survive verification. Rejected leads are
+ * logged (not stored as leads) so the reason is auditable.
  */
 export async function runDiscovery(params: {
   industryKeyword?: string;
   locationKeyword?: string;
-}): Promise<{ discovered: number; verified: number; rejected: number }> {
-  const candidates = await searchNoWebsiteCompanies({
-    industryKeyword: params.industryKeyword,
-    locationKeyword: params.locationKeyword,
-    perPage: 25,
+}): Promise<{ discovered: number; verified: number; rejected: number; usedFallback: boolean }> {
+  const scraped = await findCandidateBusinesses({
+    industryKeyword: params.industryKeyword ?? "",
+    locationKeyword: params.locationKeyword ?? "",
   });
+
+  const usedFallback = scraped.length === 0;
+  const candidates = usedFallback
+    ? sampleCandidates({
+        industryKeyword: params.industryKeyword,
+        locationKeyword: params.locationKeyword,
+      })
+    : scraped;
 
   let verifiedCount = 0;
   let rejectedCount = 0;
@@ -103,5 +112,6 @@ export async function runDiscovery(params: {
     discovered: candidates.length,
     verified: verifiedCount,
     rejected: rejectedCount,
+    usedFallback,
   };
 }

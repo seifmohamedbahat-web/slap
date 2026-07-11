@@ -1,0 +1,270 @@
+// AVEXA — Autonomous AI Web Agency
+// Core CRM / pipeline data model.
+// Provider is SQLite for local/dev; point DATABASE_URL at Postgres (e.g. Supabase)
+// in production — the schema below is Postgres-compatible.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum LeadStatus {
+  DISCOVERED
+  VERIFYING
+  VERIFIED_NO_WEBSITE
+  REJECTED_HAS_WEBSITE
+  ANALYZED
+  ASSETS_GENERATED
+  OUTREACH_READY
+  OUTREACH_SENT
+  REPLIED
+  MEETING_BOOKED
+  WON
+  LOST
+}
+
+enum LeadSource {
+  GOOGLE_MAPS
+  GOOGLE_BUSINESS_PROFILE
+  FACEBOOK
+  INSTAGRAM
+  YELP
+  YELLOW_PAGES
+  APPLE_MAPS
+  BING_PLACES
+  APOLLO
+  DIRECTORY
+  MANUAL
+}
+
+enum AssetStatus {
+  NOT_NEEDED
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}
+
+enum OutreachChannel {
+  EMAIL
+  SMS
+  INSTAGRAM_DM
+  FACEBOOK_MESSAGE
+  LINKEDIN
+}
+
+enum OutreachStatus {
+  DRAFT
+  APPROVED
+  SENT
+  REPLIED
+  BOUNCED
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Identity
+  businessName String
+  ownerName    String?
+  category     String
+  slug         String     @unique
+
+  // Contact
+  phone   String?
+  email   String?
+  address String?
+  city    String?
+  state   String?
+  country String?
+
+  // Discovery / verification
+  source           LeadSource
+  status           LeadStatus @default(DISCOVERED)
+  websiteVerified  Boolean    @default(false)
+  verificationNote String?
+  sourcesChecked   String? // JSON array of sources checked during verification
+
+  // Social / listing presence
+  googleMapsUrl String?
+  facebookUrl   String?
+  instagramUrl  String?
+  googleRating  Float?
+  reviewCount   Int?
+  openingHours  String? // JSON
+  photos        String? // JSON array of URLs
+  logoUrl       String?
+
+  // Firmographics
+  employeeEstimate String?
+  revenueEstimate  String?
+
+  description String?
+
+  // Relations
+  profile        BusinessProfile?
+  score           LeadScore?
+  website         WebsiteProject?
+  bookingSystem   BookingSystem?
+  adminDashboard  AdminDashboardProject?
+  outreachMessages OutreachMessage[]
+  activity        ActivityEvent[]
+  appointments    Appointment[]
+  notes           Note[]
+
+  dealValue Float?
+  closedAt  DateTime?
+
+  @@index([status])
+  @@index([source])
+  @@index([category])
+}
+
+model BusinessProfile {
+  id     String @id @default(cuid())
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  industry        String?
+  brandStyle      String?
+  toneOfVoice     String?
+  usp             String? // unique selling proposition
+  targetCustomers String?
+  personality     String?
+  competitors     String? // JSON array
+  services        String? // JSON array
+  colorPalette    String? // JSON array of hex codes inferred for the business
+  summary         String? // AI-generated narrative summary
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeadScore {
+  id     String @id @default(cuid())
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  leadScore           Int // 0-100
+  closingProbability  Int // 0-100
+  businessQuality     Int // 0-100
+  growthPotential     Int // 0-100
+  priority            String // low | medium | high | urgent
+  aiConfidence        Int // 0-100
+
+  needsWebsite  Boolean @default(true)
+  needsBooking  Boolean @default(false)
+  needsDashboard Boolean @default(false)
+  needsCrm      Boolean @default(true)
+  needsAutomation Boolean @default(false)
+
+  reasoning String // AI explanation for the recommendation
+
+  suggestedPriceLow  Int?
+  suggestedPriceHigh Int?
+
+  createdAt DateTime @default(now())
+}
+
+model WebsiteProject {
+  id     String @id @default(cuid())
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  status       AssetStatus @default(PENDING)
+  pagesJson    String? // JSON: generated page content keyed by page name
+  previewPath  String? // /preview/[leadId]
+  generatedAt  DateTime?
+  generationMs Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BookingSystem {
+  id     String @id @default(cuid())
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  status        AssetStatus @default(NOT_NEEDED)
+  staffJson     String? // JSON array of staff/resources
+  servicesJson  String? // JSON array of bookable services with durations
+  availability  String? // JSON weekly availability template
+  generatedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  customerName  String
+  customerEmail String?
+  customerPhone String?
+  service       String
+  staff         String?
+  startsAt      DateTime
+  durationMins  Int      @default(30)
+  status        String   @default("confirmed") // confirmed | cancelled | completed
+
+  createdAt DateTime @default(now())
+}
+
+model AdminDashboardProject {
+  id     String @id @default(cuid())
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  status       AssetStatus @default(NOT_NEEDED)
+  templateKey  String? // e.g. "plumber", "dentist", "medspa", "contractor", "generic"
+  sectionsJson String? // JSON array of dashboard sections/modules
+  seedDataJson String? // JSON mock records for the demo dashboard
+  generatedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OutreachMessage {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  channel OutreachChannel
+  status  OutreachStatus  @default(DRAFT)
+  subject String?
+  body    String
+
+  approvedAt DateTime?
+  sentAt     DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model ActivityEvent {
+  id        String   @id @default(cuid())
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String // lead_discovered | lead_verified | lead_rejected | website_generated | booking_generated | dashboard_generated | outreach_drafted | outreach_sent | meeting_booked | deal_won
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

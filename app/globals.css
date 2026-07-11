@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #000000;
+  --color-bg-secondary: #111111;
+  --color-card: #181818;
+  --color-border: #2a2a2a;
+  --color-fg: #ffffff;
+  --color-fg-muted: #a1a1a1;
+  --color-accent: #e10600;
+  --color-accent-hover: #ff1a12;
+  --color-success: #16c784;
+  --color-warning: #f5a623;
+  --color-error: #ff3b30;
+}
+
+@theme inline {
+  --color-avexa-bg: var(--color-bg);
+  --color-avexa-bg-secondary: var(--color-bg-secondary);
+  --color-avexa-card: var(--color-card);
+  --color-avexa-border: var(--color-border);
+  --color-avexa-fg: var(--color-fg);
+  --color-avexa-fg-muted: var(--color-fg-muted);
+  --color-avexa-accent: var(--color-accent);
+  --color-avexa-accent-hover: var(--color-accent-hover);
+  --color-avexa-success: var(--color-success);
+  --color-avexa-warning: var(--color-warning);
+  --color-avexa-error: var(--color-error);
+  --font-sans: var(--font-inter);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+@keyframes avexa-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-avexa-pulse {
+  animation: avexa-pulse 1.8s ease-in-out infinite;
+}

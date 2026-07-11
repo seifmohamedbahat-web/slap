@@ -87,7 +87,7 @@ export function initParticleField(canvas) {
       lines.rotation.y = t * 0.02;
     }
     renderer.render(scene, camera);
-  });
+  }, canvas);
 
   requestAnimationFrame(() => token.done());
 }

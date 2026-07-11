@@ -1,12 +1,10 @@
 /* Placeholder listing data — prices, specs, and copy are illustrative only.
    Replace every field with real MLS data before launch.
 
-   5 of the 8 listings now use client-supplied photography (`photo` field).
+   All 5 listings below use client-supplied photography (`photo` field).
    Note: these photos depict other properties (not the San Diego addresses
    named below) supplied for this build — swap in real on-location photos
-   of each actual listing before launch. The remaining 3 listings still use
-   procedurally-drafted blueprint elevation art (see elevations.js) since no
-   photography was supplied for them. */
+   of each actual listing before launch. */
 export const LISTINGS = [
   {
     id: 'la-jolla-crest',
@@ -21,17 +19,6 @@ export const LISTINGS = [
     blurb: 'A cliffside estate with walls of glass framing the Pacific, a chef’s kitchen, and a resort-style terrace built for entertaining.',
   },
   {
-    id: 'del-mar-shoreline',
-    status: 'For Sale',
-    price: '$5,280,000',
-    title: 'Del Mar Shoreline Villa',
-    neighborhood: 'Del Mar',
-    location: 'Del Mar, San Diego, CA',
-    beds: 5, baths: 6, sqft: 6140,
-    tags: ['Beach Access', 'Wine Cellar', 'Home Theater'],
-    blurb: 'Steps from the sand, this placeholder villa blends contemporary architecture with warm, hand-selected finishes throughout.',
-  },
-  {
     id: 'rancho-santa-fe-estate',
     status: 'Pending',
     price: '$8,900,000',
@@ -44,17 +31,6 @@ export const LISTINGS = [
     blurb: 'Gated grounds and a residence built to museum-quality standards on nearly two private acres.',
   },
   {
-    id: 'coronado-waterfront',
-    status: 'For Sale',
-    price: '$7,150,000',
-    title: 'Coronado Waterfront Manor',
-    neighborhood: 'Coronado',
-    location: 'Coronado, San Diego, CA',
-    beds: 6, baths: 6, sqft: 7050,
-    tags: ['Bay View', 'Private Dock', 'Elevator'],
-    blurb: 'A rare placeholder bayfront address minutes from the village, offering panoramic water views and effortless indoor-outdoor living.',
-  },
-  {
     id: 'point-loma-modern',
     status: 'For Sale',
     price: '$4,675,000',
@@ -65,17 +41,6 @@ export const LISTINGS = [
     tags: ['Panoramic View', 'Rooftop Deck', 'Chef’s Kitchen'],
     photo: 'assets/img/listings/point-loma-modern.webp',
     blurb: 'Sculptural architecture and expansive glass open to sweeping views of the bay and downtown skyline.',
-  },
-  {
-    id: 'carmel-valley-estate',
-    status: 'Sold',
-    price: '$3,995,000',
-    title: 'Carmel Valley Signature Estate',
-    neighborhood: 'Carmel Valley',
-    location: 'Carmel Valley, San Diego, CA',
-    beds: 6, baths: 6, sqft: 6280,
-    tags: ['Golf Course', 'Home Gym', 'Solar'],
-    blurb: 'An elegant placeholder family estate on a premier lot, designed for multigenerational living and grand-scale entertaining.',
   },
   {
     id: 'encinitas-modern-farmhouse',

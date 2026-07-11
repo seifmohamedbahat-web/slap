@@ -38,10 +38,16 @@ export function watchResize(fn) {
 
 /* Runs `fn(time)` every frame via gsap.ticker unless prefers-reduced-motion,
    in which case it renders a single static frame so the scene still reflects
-   scroll-driven state without a continuous animation loop. */
-export function runLoop(fn) {
+   scroll-driven state without a continuous animation loop. Pass `el` (the
+   canvas, or any element inside the page/section it belongs to) to skip
+   rendering while that section is hidden — e.g. an inactive tab in a
+   single-page build — so idle scenes don't burn GPU cycles offscreen. */
+export function runLoop(fn, el) {
   if (REDUCED_MOTION) { fn(0); return () => {}; }
-  const tick = (t) => fn(t);
+  const tick = (t) => {
+    if (el && el.offsetParent === null) return;
+    fn(t);
+  };
   gsap.ticker.add(tick);
   return () => gsap.ticker.remove(tick);
 }

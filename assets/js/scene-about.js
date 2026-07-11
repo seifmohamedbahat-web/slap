@@ -72,7 +72,7 @@ export function initCornerstone(canvas, sectionEl) {
       wireMat.opacity = 0.55;
     }
     renderer.render(scene, camera);
-  });
+  }, canvas);
 
   requestAnimationFrame(() => token.done());
 }

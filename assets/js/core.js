@@ -199,8 +199,8 @@ export function initNav() {
 }
 
 /* ---------------------------------------------------------------- SplitText hero */
-export function splitHero(selector) {
-  const el = document.querySelector(selector);
+export function splitHero(selector, root = document) {
+  const el = root.querySelector(selector);
   if (!el) return;
   if (REDUCED_MOTION) { el.style.opacity = 1; return; }
 

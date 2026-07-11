@@ -109,7 +109,7 @@ export function initHeroScene(canvas) {
   runLoop(() => {
     setProgress(progress);
     renderer.render(scene, camera);
-  });
+  }, canvas);
 
   requestAnimationFrame(() => token.done());
 }
@@ -189,7 +189,7 @@ export function initGalleryDolly(section, canvas, captionRoot) {
       material.uniforms.uOpacity.value = THREE.MathUtils.clamp(1.4 - dist / 16, 0, 1);
     });
     renderer.render(scene, camera);
-  });
+  }, canvas);
 
   requestAnimationFrame(() => token.done());
 }

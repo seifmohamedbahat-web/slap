@@ -97,7 +97,7 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
   runLoop((time) => {
     planeMap.forEach(({ material }) => { material.uniforms.uTime.value = time / 1000; });
     renderer.render(scene, camera);
-  });
+  }, canvas);
 
   gridEl.addEventListener('mouseover', (e) => {
     const tile = e.target.closest('.listing-tile');

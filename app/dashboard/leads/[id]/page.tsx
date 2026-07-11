@@ -72,6 +72,16 @@ export default async function LeadDetailPage({
                 <Link2 className="h-3.5 w-3.5" /> Instagram
               </a>
             )}
+            {lead.linkedinUrl && (
+              <a href={lead.linkedinUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-avexa-fg">
+                <Link2 className="h-3.5 w-3.5" /> LinkedIn
+              </a>
+            )}
+            {lead.googleMapsUrl && (
+              <a href={lead.googleMapsUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-avexa-fg">
+                <Link2 className="h-3.5 w-3.5" /> Google Maps
+              </a>
+            )}
           </div>
         </div>
       </div>

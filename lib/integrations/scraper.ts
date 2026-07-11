@@ -4,11 +4,12 @@ import type { DiscoveredCompany } from "@/lib/types";
  * AVEXA's own lead-discovery tool — no third-party lead-gen API/SaaS.
  *
  * It queries DuckDuckGo's no-JS HTML endpoint (a plain static search results
- * page — no API key, no account) for business listings on Facebook and Yelp,
- * which is where small local businesses without a website of their own tend
- * to show up. Every candidate this turns up is still just that — a
- * *candidate* — and gets run through `verifyNoWebsite`'s independent domain
- * probe before it's ever allowed into the CRM as a lead.
+ * page — no API key, no account) for business listings on Google Maps,
+ * Facebook, Instagram, LinkedIn, and Yelp, which is where small local
+ * businesses without a website of their own tend to show up. Every candidate
+ * this turns up is still just that — a *candidate* — and gets run through
+ * `verifyNoWebsite`'s independent domain probe before it's ever allowed into
+ * the CRM as a lead.
  *
  * If the search host can't be reached (e.g. this process's network policy
  * blocks it), discovery falls back to a small curated sample so the rest of
@@ -81,24 +82,78 @@ async function searchDuckDuckGo(query: string): Promise<SearchResult[]> {
 }
 
 function businessNameFromTitle(title: string, suffixPattern: RegExp): string | null {
-  const cleaned = title.replace(suffixPattern, "").trim();
+  const cleaned = title
+    .replace(suffixPattern, "")
+    .replace(/\(@[\w.]+\)/g, "") // strip Instagram "(@handle)"
+    .trim();
   if (!cleaned || cleaned.length < 2 || cleaned.length > 80) return null;
   return cleaned;
 }
 
-async function findFacebookCandidates(
+type SourceKey = "GOOGLE_MAPS" | "FACEBOOK" | "INSTAGRAM" | "LINKEDIN" | "YELP";
+
+type SiteConfig = {
+  source: SourceKey;
+  siteFilter: string;
+  urlMustInclude: string;
+  titleSuffix: RegExp;
+  urlField: "googleMapsUrl" | "facebookUrl" | "instagramUrl" | "linkedinUrl" | undefined;
+};
+
+const SITES: SiteConfig[] = [
+  {
+    source: "GOOGLE_MAPS",
+    siteFilter: "site:google.com/maps",
+    urlMustInclude: "google.com/maps",
+    titleSuffix: /\s*[|-]\s*Google Maps\s*$/i,
+    urlField: "googleMapsUrl",
+  },
+  {
+    source: "FACEBOOK",
+    siteFilter: "site:facebook.com",
+    urlMustInclude: "facebook.com/",
+    titleSuffix: /\s*[|-]\s*Facebook\s*$/i,
+    urlField: "facebookUrl",
+  },
+  {
+    source: "INSTAGRAM",
+    siteFilter: "site:instagram.com",
+    urlMustInclude: "instagram.com/",
+    titleSuffix: /\s*[•|]\s*Instagram( photos and videos)?\s*$/i,
+    urlField: "instagramUrl",
+  },
+  {
+    source: "LINKEDIN",
+    siteFilter: "site:linkedin.com/company",
+    urlMustInclude: "linkedin.com/company",
+    titleSuffix: /\s*[|-]\s*LinkedIn\s*$/i,
+    urlField: "linkedinUrl",
+  },
+  {
+    source: "YELP",
+    siteFilter: "site:yelp.com/biz",
+    urlMustInclude: "yelp.com/biz",
+    titleSuffix: /\s*[|-]\s*Yelp\s*$/i,
+    urlField: undefined,
+  },
+];
+
+async function findSiteCandidates(
+  config: SiteConfig,
   industry: string,
   location: string
 ): Promise<DiscoveredCompany[]> {
   const results = await searchDuckDuckGo(
-    `site:facebook.com ${industry} ${location}`.trim()
+    `${config.siteFilter} ${industry} ${location}`.trim()
   );
+
   const out: DiscoveredCompany[] = [];
   for (const r of results) {
-    if (!r.url.includes("facebook.com/")) continue;
-    const name = businessNameFromTitle(r.title, /\s*[|-]\s*Facebook\s*$/i);
+    if (!r.url.includes(config.urlMustInclude)) continue;
+    const name = businessNameFromTitle(r.title, config.titleSuffix);
     if (!name) continue;
-    out.push({
+
+    const candidate: DiscoveredCompany = {
       businessName: name,
       category: industry || "Local Business",
       city: location.split(",")[0]?.trim() || undefined,
@@ -106,40 +161,18 @@ async function findFacebookCandidates(
       country: "US",
       websiteUrl: null,
       domain: null,
-      facebookUrl: r.url.split("?")[0],
+      facebookUrl: null,
       instagramUrl: null,
       googleMapsUrl: null,
       description: r.snippet || undefined,
-      source: "FACEBOOK",
-    });
-  }
-  return out;
-}
+      source: config.source,
+    };
 
-async function findYelpCandidates(
-  industry: string,
-  location: string
-): Promise<DiscoveredCompany[]> {
-  const results = await searchDuckDuckGo(
-    `site:yelp.com/biz ${industry} ${location}`.trim()
-  );
-  const out: DiscoveredCompany[] = [];
-  for (const r of results) {
-    if (!r.url.includes("yelp.com/biz")) continue;
-    const name = businessNameFromTitle(r.title, /\s*[|-]\s*Yelp\s*$/i);
-    if (!name) continue;
-    out.push({
-      businessName: name,
-      category: industry || "Local Business",
-      city: location.split(",")[0]?.trim() || undefined,
-      state: location.split(",")[1]?.trim() || undefined,
-      country: "US",
-      websiteUrl: null,
-      domain: null,
-      googleMapsUrl: null,
-      description: r.snippet || undefined,
-      source: "YELP",
-    });
+    if (config.urlField) {
+      candidate[config.urlField] = r.url.split("?")[0];
+    }
+
+    out.push(candidate);
   }
   return out;
 }
@@ -158,9 +191,9 @@ function dedupeByName(companies: DiscoveredCompany[]): DiscoveredCompany[] {
 
 /**
  * Finds candidate businesses for a given industry/location by searching
- * Facebook and Yelp listings via DuckDuckGo. Returns an empty array (never
- * throws) if the search engine can't be reached — callers should fall back
- * to a local sample in that case.
+ * Google Maps, Facebook, Instagram, LinkedIn, and Yelp listings via
+ * DuckDuckGo. Returns an empty array (never throws) if the search engine
+ * can't be reached — callers should fall back to a local sample in that case.
  */
 export async function findCandidateBusinesses(params: {
   industryKeyword: string;
@@ -168,10 +201,9 @@ export async function findCandidateBusinesses(params: {
 }): Promise<DiscoveredCompany[]> {
   const { industryKeyword, locationKeyword } = params;
 
-  const [fb, yelp] = await Promise.all([
-    findFacebookCandidates(industryKeyword, locationKeyword),
-    findYelpCandidates(industryKeyword, locationKeyword),
-  ]);
+  const results = await Promise.all(
+    SITES.map((site) => findSiteCandidates(site, industryKeyword, locationKeyword))
+  );
 
-  return dedupeByName([...fb, ...yelp]);
+  return dedupeByName(results.flat());
 }

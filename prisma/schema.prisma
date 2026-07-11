@@ -32,6 +32,7 @@ enum LeadSource {
   GOOGLE_BUSINESS_PROFILE
   FACEBOOK
   INSTAGRAM
+  LINKEDIN
   YELP
   YELLOW_PAGES
   APPLE_MAPS
@@ -95,6 +96,7 @@ model Lead {
   googleMapsUrl String?
   facebookUrl   String?
   instagramUrl  String?
+  linkedinUrl   String?
   googleRating  Float?
   reviewCount   Int?
   openingHours  String? // JSON

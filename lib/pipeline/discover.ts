@@ -15,8 +15,14 @@ function slugify(name: string, city?: string | null): string {
 
 function mapSource(source: DiscoveredCompany["source"]): LeadSource {
   switch (source) {
+    case "GOOGLE_MAPS":
+      return LeadSource.GOOGLE_MAPS;
     case "FACEBOOK":
       return LeadSource.FACEBOOK;
+    case "INSTAGRAM":
+      return LeadSource.INSTAGRAM;
+    case "LINKEDIN":
+      return LeadSource.LINKEDIN;
     case "YELP":
       return LeadSource.YELP;
     default:
@@ -88,6 +94,7 @@ export async function runDiscovery(params: {
         facebookUrl: candidate.facebookUrl ?? undefined,
         instagramUrl: candidate.instagramUrl ?? undefined,
         googleMapsUrl: candidate.googleMapsUrl ?? undefined,
+        linkedinUrl: candidate.linkedinUrl ?? undefined,
         googleRating: candidate.googleRating ?? undefined,
         reviewCount: candidate.reviewCount ?? undefined,
         employeeEstimate: candidate.employeeEstimate ?? undefined,

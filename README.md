@@ -14,7 +14,7 @@ Postgres/Supabase) drop in cleanly.
 
 | Piece | Without any keys | With a key |
 |---|---|---|
-| Lead discovery | **Always real, no key needed** — AVEXA's own scraper (`lib/integrations/scraper.ts`) searches Facebook and Yelp listings via DuckDuckGo's HTML search endpoint. Falls back to a small curated sample only if that search host is unreachable from wherever this is running. | — |
+| Lead discovery | **Always real, no key needed** — AVEXA's own scraper (`lib/integrations/scraper.ts`) searches Google Maps, Facebook, Instagram, LinkedIn, and Yelp listings via DuckDuckGo's HTML search endpoint. Falls back to a small curated sample only if that search host is unreachable from wherever this is running. | — |
 | No-website verification | **Always real** — every candidate also gets a live HTTP probe of `name.com` / `.net` / `.co` before being accepted, independent of how it was discovered | same |
 | Business analysis / lead scoring / outreach copy | Deterministic heuristics + templates | `ANTHROPIC_API_KEY` → Claude generates the profile, score reasoning, and outreach copy |
 | Outreach sending | Simulated send (message still moves DRAFT → APPROVED → SENT in the CRM) | `RESEND_API_KEY` → actually delivers the email |
@@ -67,13 +67,14 @@ feed and gives an audit trail of exactly what the AI did and why (see
 
 `lib/integrations/scraper.ts` is AVEXA's own discovery tool — it queries
 DuckDuckGo's no-JS HTML search endpoint (a static results page, no API key or
-account) for `site:facebook.com` and `site:yelp.com/biz` listings matching an
-industry + location keyword, and parses candidate business names out of the
-result titles. It never calls a paid lead-gen API. If that search host is
-unreachable, `lib/pipeline/discover.ts` falls back to
-`lib/integrations/sampleLeads.ts`, a small curated sample, so the rest of the
-pipeline stays demoable — the discovery API response includes `usedFallback`
-so the UI can say so.
+account) for `site:google.com/maps`, `site:facebook.com`, `site:instagram.com`,
+`site:linkedin.com/company`, and `site:yelp.com/biz` listings matching an
+industry + location keyword (run in parallel, deduped by business name), and
+parses candidate business names out of the result titles. It never calls a
+paid lead-gen API. If that search host is unreachable, `lib/pipeline/discover.ts`
+falls back to `lib/integrations/sampleLeads.ts`, a small curated sample, so the
+rest of the pipeline stays demoable — the discovery API response includes
+`usedFallback` so the UI can say so.
 
 ### No-website verification
 
@@ -120,10 +121,11 @@ properties in `app/globals.css` and consumed as Tailwind utilities (`bg-avexa-*`
 
 ## Not in this build
 
-Live per-lead deployment to Vercel/GitHub, Google Maps/Instagram/Yellow Pages/
-Apple Maps/Bing Places scraping (Facebook and Yelp are the two wired discovery
-sources), SMS/DM sending, Supabase Auth and role-based access control, and n8n
-workflow orchestration are out of scope for this pass. The pipeline and data
-model are structured so each can be added without restructuring what's here —
-e.g. add another `find*Candidates` function to `lib/integrations/scraper.ts`
-for another directory, or add a deploy step after `generateWebsite`.
+Live per-lead deployment to Vercel/GitHub, Yellow Pages/Apple Maps/Bing Places
+scraping (Google Maps, Facebook, Instagram, LinkedIn, and Yelp are the five
+wired discovery sources), SMS/DM sending, Supabase Auth and role-based access
+control, and n8n workflow orchestration are out of scope for this pass. The
+pipeline and data model are structured so each can be added without
+restructuring what's here — e.g. add another entry to the `SITES` array in
+`lib/integrations/scraper.ts` for another directory, or add a deploy step
+after `generateWebsite`.

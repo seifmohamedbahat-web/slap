@@ -6,9 +6,10 @@ export default function DiscoverPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Discover Leads</h1>
         <p className="mt-1 text-sm text-avexa-fg-muted">
-          Searches Facebook and Yelp business listings for your keywords using AVEXA&apos;s
-          own scraper (no third-party lead-gen API), verifies each candidate has no live
-          website through an independent domain probe, and only saves the ones that pass.
+          Searches Google Maps, Facebook, Instagram, LinkedIn, and Yelp listings for your
+          keywords using AVEXA&apos;s own scraper (no third-party lead-gen API), verifies
+          each candidate has no live website through an independent domain probe, and only
+          saves the ones that pass.
         </p>
       </div>
       <DiscoverForm />

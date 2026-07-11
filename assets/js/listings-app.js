@@ -69,13 +69,25 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
   }
   buildPlanes();
 
-  function layout() {
+  // Camera/renderer size only needs recomputing when the grid itself
+  // resizes (rare: window resize, filter reflow).
+  let camH = 0;
+  function updateCameraSize() {
     const rect = gridWrap.getBoundingClientRect();
     const w = rect.width, h = rect.height;
+    camH = h;
     renderer.setSize(w, h, false);
     camera.left = 0; camera.right = w; camera.top = h; camera.bottom = 0;
     camera.updateProjectionMatrix();
+  }
 
+  // Per-tile plane position/size, re-read from the live DOM every frame —
+  // tiles keep moving after their reveal/hover/filter CSS transforms start
+  // (transform doesn't reflow, but it does change getBoundingClientRect），
+  // so a one-off sync would leave the photo a frame behind and visibly
+  // drifting off its card during those transitions.
+  function syncPlanes() {
+    const rect = gridWrap.getBoundingClientRect();
     gridEl.querySelectorAll('.listing-media').forEach((mediaEl) => {
       const id = mediaEl.dataset.media;
       const entry = planeMap.get(id);
@@ -89,17 +101,18 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
       entry.mesh.visible = true;
       entry.mesh.scale.set(mRect.width, mRect.height, 1);
       // Three's Y axis points up; DOM rects are measured from the top, so flip.
-      entry.mesh.position.set(localX + mRect.width / 2, h - (localY + mRect.height / 2), 0);
+      entry.mesh.position.set(localX + mRect.width / 2, camH - (localY + mRect.height / 2), 0);
       entry.material.uniforms.uPlanePx.value.set(mRect.width, mRect.height);
     });
   }
 
-  const ro = new ResizeObserver(() => requestAnimationFrame(layout));
+  const ro = new ResizeObserver(updateCameraSize);
   ro.observe(gridWrap);
-  watchResize(layout);
-  requestAnimationFrame(() => { layout(); requestAnimationFrame(layout); });
+  watchResize(updateCameraSize);
+  updateCameraSize();
 
   runLoop((time) => {
+    syncPlanes();
     planeMap.forEach(({ material }) => { material.uniforms.uTime.value = time / 1000; });
     renderer.render(scene, camera);
   }, canvas);
@@ -159,7 +172,6 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
       }
     });
     resultsCount.textContent = `Showing ${visible} of ${LISTINGS.length} properties`;
-    setTimeout(() => requestAnimationFrame(layout), 350);
   }
   applyFilter();
 

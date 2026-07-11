@@ -5,7 +5,7 @@ import { THREE, makeRenderer, watchResize, runLoop, REDUCED_MOTION } from './web
 import { createDistortionMaterial } from './distortion-material.js';
 import { getElevationCanvas, getListingTexture } from './elevations.js';
 import { LISTINGS } from './listings-data.js';
-import { registerPreloadToken } from './core.js';
+import { registerPreloadToken, initCounters } from './core.js';
 
 const specIcon = {
   bed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 18v2M21 18v2M3 13h18M7 13V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4"/></svg>',
@@ -13,21 +13,25 @@ const specIcon = {
   sqft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h4M9 3v4"/></svg>',
 };
 
+function priceNumber(l) {
+  return parseInt(l.price.replace(/\D/g, ''), 10);
+}
+
 function tileHTML(l) {
   return `
     <div class="listing-tile" data-id="${l.id}" data-neighborhood="${l.neighborhood}" data-status="${l.status}"
          tabindex="0" role="button" aria-haspopup="dialog" aria-label="View details for ${l.title}, ${l.price}">
       <div class="listing-media" data-media="${l.id}">
         <span class="listing-tag">${l.status}</span>
-        <span class="listing-price spec">${l.price}</span>
+        <span class="listing-price spec">$<span data-counter="${priceNumber(l)}">0</span></span>
       </div>
       <div class="listing-body">
         <h3 class="listing-title">${l.title}</h3>
         <div class="listing-loc">${l.location}</div>
         <div class="listing-specs">
-          <span>${specIcon.bed}${l.beds} Beds</span>
-          <span>${specIcon.bath}${l.baths} Baths</span>
-          <span>${specIcon.sqft}${l.sqft.toLocaleString()} Sq Ft</span>
+          <span>${specIcon.bed}<span data-counter="${l.beds}">0</span> Beds</span>
+          <span>${specIcon.bath}<span data-counter="${l.baths}">0</span> Baths</span>
+          <span>${specIcon.sqft}<span data-counter="${l.sqft}">0</span> Sq Ft</span>
         </div>
       </div>
     </div>`;
@@ -35,6 +39,7 @@ function tileHTML(l) {
 
 export function renderListingGrid(gridEl, list = LISTINGS) {
   gridEl.innerHTML = list.map(tileHTML).join('');
+  initCounters(gridEl);
 }
 
 export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsCount, modalRoot }) {
@@ -190,12 +195,12 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
     modalMedia.insertBefore(img, modalMedia.firstChild);
 
     modalBody.innerHTML = `
-      <h2 id="modal-title" class="modal-price spec">${listing.price}</h2>
+      <h2 id="modal-title" class="modal-price spec">$<span data-counter="${priceNumber(listing)}">0</span></h2>
       <div class="modal-loc">${listing.location}</div>
       <div class="modal-specs">
-        <div><strong>${listing.beds}</strong><span>Beds</span></div>
-        <div><strong>${listing.baths}</strong><span>Baths</span></div>
-        <div><strong>${listing.sqft.toLocaleString()}</strong><span>Sq Ft</span></div>
+        <div><strong><span data-counter="${listing.beds}">0</span></strong><span>Beds</span></div>
+        <div><strong><span data-counter="${listing.baths}">0</span></strong><span>Baths</span></div>
+        <div><strong><span data-counter="${listing.sqft}">0</span></strong><span>Sq Ft</span></div>
       </div>
       <p>${listing.blurb}</p>
       <div class="modal-tags">${listing.tags.map(t => `<span>${t}</span>`).join('')}</div>
@@ -203,6 +208,7 @@ export function initListingsPage({ gridWrap, gridEl, canvas, filterBar, resultsC
         <a class="btn btn-primary" href="tel:16197876628">Call (619) 787-6628</a>
         <a class="btn btn-outline" href="contact.html">Inquire About This Home</a>
       </div>`;
+    initCounters(modalBody);
 
     overlay.classList.add('is-open');
     gsap.set(overlay, { opacity: 0 });

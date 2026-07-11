@@ -244,12 +244,22 @@ export function initReveals() {
 }
 
 /* ---------------------------------------------------------------- Count-up stats */
-export function initCounters() {
-  document.querySelectorAll('[data-counter]').forEach((el) => {
+function formatCounterValue(val, decimals) {
+  if (decimals > 0) return val.toFixed(decimals);
+  return Math.round(val).toLocaleString('en-US');
+}
+
+/* Wires up every [data-counter] element under `root` to count up from 0 the
+   first time it scrolls into view. Safe to call more than once — already
+   -wired elements (marked with data-counter-wired) are skipped, so it can be
+   re-run after new markup (e.g. a rendered grid or modal) is inserted. */
+export function initCounters(root = document) {
+  root.querySelectorAll('[data-counter]:not([data-counter-wired])').forEach((el) => {
+    el.dataset.counterWired = 'true';
     const target = parseFloat(el.dataset.counter);
     const decimals = parseInt(el.dataset.decimals || '0', 10);
     const obj = { val: 0 };
-    if (REDUCED_MOTION) { el.textContent = target.toFixed(decimals); return; }
+    if (REDUCED_MOTION) { el.textContent = formatCounterValue(target, decimals); return; }
     ScrollTrigger.create({
       trigger: el,
       start: 'top 90%',
@@ -257,7 +267,7 @@ export function initCounters() {
       onEnter: () => {
         gsap.to(obj, {
           val: target, duration: 1.8, ease: 'power2.out',
-          onUpdate: () => { el.textContent = obj.val.toFixed(decimals); },
+          onUpdate: () => { el.textContent = formatCounterValue(obj.val, decimals); },
         });
       },
     });

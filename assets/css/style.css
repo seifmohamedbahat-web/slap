@@ -471,7 +471,10 @@ section { position: relative; padding: 120px 0; }
 /* ==========================================================================
    Listings
    ========================================================================== */
-.listing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px 36px; }
+/* Flexbox rather than Grid: an incomplete last row (e.g. 5 listings across
+   3 columns) centers itself automatically instead of leaving a lopsided gap. */
+.listing-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 44px 36px; }
+.listing-tile { flex: 1 1 360px; max-width: 400px; }
 .listing-tile {
   position: relative;
   background: var(--surface);
@@ -630,7 +633,6 @@ section { position: relative; padding: 120px 0; }
    Responsive
    ========================================================================== */
 @media (max-width: 1080px) {
-  .listing-grid { grid-template-columns: repeat(2, 1fr); }
   .split { grid-template-columns: 1fr; gap: 44px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr; }
@@ -647,7 +649,7 @@ section { position: relative; padding: 120px 0; }
   .brand-mark { width: 36px; height: 36px; font-size: 1rem; }
   .nav-cta { gap: 10px; }
   .nav-cta .btn-sm { padding: 10px 16px; font-size: 0.64rem; }
-  .listing-grid { grid-template-columns: 1fr; }
+  .listing-tile { max-width: 100%; }
   .form-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 34px; }
   .value-grid { grid-template-columns: 1fr; }

@@ -41,8 +41,9 @@ export default function Hero() {
                 Get a Free Quote
                 <Icon name="arrow-right" size={16} />
               </a>
-              <a href="#portfolio" className="btn-dark-ghost">
-                See Our Work
+              <a href="#book" className="btn-dark-ghost">
+                <Icon name="calendar" size={16} />
+                Book a Free Call
               </a>
             </div>
           </Reveal>

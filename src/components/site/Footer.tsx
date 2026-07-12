@@ -8,6 +8,7 @@ const QUICK_LINKS = [
   { href: "#portfolio", label: "Portfolio" },
   { href: "#about", label: "About" },
   { href: "#pricing", label: "Pricing" },
+  { href: "#book", label: "Book a Call" },
   { href: "#contact", label: "Contact" },
 ];
 

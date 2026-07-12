@@ -83,6 +83,30 @@ export async function deleteLead(id: number) {
   refresh("/admin/leads");
 }
 
+/* -------------------------------- bookings -------------------------------- */
+
+export async function setBookingStatus(id: number, formData: FormData) {
+  await requireAdmin();
+  const status = String(formData.get("status"));
+  if (!["pending", "confirmed", "completed", "cancelled"].includes(status)) return;
+  getDb()
+    .prepare("UPDATE bookings SET status = ?, is_read = 1 WHERE id = ?")
+    .run(status, id);
+  refresh("/admin/bookings");
+}
+
+export async function toggleBookingRead(id: number) {
+  await requireAdmin();
+  getDb().prepare("UPDATE bookings SET is_read = 1 - is_read WHERE id = ?").run(id);
+  refresh("/admin/bookings");
+}
+
+export async function deleteBooking(id: number) {
+  await requireAdmin();
+  getDb().prepare("DELETE FROM bookings WHERE id = ?").run(id);
+  refresh("/admin/bookings");
+}
+
 /* -------------------------------- services -------------------------------- */
 
 export async function saveService(id: number | null, formData: FormData) {

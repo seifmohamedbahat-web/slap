@@ -2,7 +2,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import PageHeader from "@/components/admin/PageHeader";
 import StatusBadge from "@/components/admin/StatusBadge";
-import { getDb, type Lead } from "@/lib/db";
+import { getCustomers, getDb, type Booking, type Lead } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -30,13 +30,24 @@ function lastNDays(n: number): { day: string; label: string; count: number }[] {
 }
 
 export default function DashboardPage() {
+  const today = new Date().toISOString().slice(0, 10);
   const newLeads = count("SELECT COUNT(*) AS n FROM leads WHERE status = 'new' AND archived = 0");
-  const weekLeads = count(
-    "SELECT COUNT(*) AS n FROM leads WHERE created_at >= datetime('now', '-7 days')"
-  );
-  const quoteRequests = count(
-    "SELECT COUNT(*) AS n FROM leads WHERE service != '' AND archived = 0"
-  );
+  const upcomingBookings = (
+    getDb()
+      .prepare("SELECT COUNT(*) AS n FROM bookings WHERE date >= ? AND status != 'cancelled'")
+      .get(today) as { n: number }
+  ).n;
+  const pendingBookings = (
+    getDb()
+      .prepare("SELECT COUNT(*) AS n FROM bookings WHERE date >= ? AND status = 'pending'")
+      .get(today) as { n: number }
+  ).n;
+  const customerCount = getCustomers().length;
+  const nextAppointments = getDb()
+    .prepare(
+      "SELECT * FROM bookings WHERE date >= ? AND status != 'cancelled' ORDER BY date, time LIMIT 4"
+    )
+    .all(today) as Booking[];
   const views = lastNDays(14);
   const views7 = views.slice(-7).reduce((sum, d) => sum + d.count, 0);
   const maxViews = Math.max(...views.map((d) => d.count), 1);
@@ -48,8 +59,13 @@ export default function DashboardPage() {
 
   const tiles = [
     { icon: "inbox", label: "New inquiries", value: newLeads, sub: "awaiting first contact" },
-    { icon: "zap", label: "Leads this week", value: weekLeads, sub: "last 7 days" },
-    { icon: "tag", label: "Quote requests", value: quoteRequests, sub: "named a service" },
+    {
+      icon: "calendar",
+      label: "Upcoming bookings",
+      value: upcomingBookings,
+      sub: pendingBookings > 0 ? `${pendingBookings} pending confirmation` : "all confirmed",
+    },
+    { icon: "users", label: "Customers", value: customerCount, sub: "unique contacts" },
     { icon: "bar-chart", label: "Page views", value: views7, sub: "last 7 days" },
   ];
 
@@ -130,8 +146,50 @@ export default function DashboardPage() {
           </table>
         </section>
 
+        <div className="flex flex-col gap-6 lg:col-span-2">
+        {/* next appointments */}
+        <section className="admin-card" aria-label="Next appointments">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display font-semibold text-ink">Next appointments</h2>
+            <Link href="/admin/bookings" className="text-xs font-semibold text-brand hover:underline">
+              View all →
+            </Link>
+          </div>
+          {nextAppointments.length === 0 ? (
+            <p className="mt-5 text-sm text-ink-soft">
+              No upcoming appointments — bookings made on the site will show up here.
+            </p>
+          ) : (
+            <ul className="mt-4 divide-y divide-ink/5">
+              {nextAppointments.map((b) => (
+                <li key={b.id} className="flex items-center justify-between gap-3 py-2.5">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`flex h-10 w-14 shrink-0 flex-col items-center justify-center rounded-lg text-[0.62rem] font-bold ${
+                        b.date === today ? "bg-brand text-white" : "bg-brand-faint text-brand"
+                      }`}
+                    >
+                      <span>{b.date.slice(5).replace("-", "/")}</span>
+                      <span>{b.time}</span>
+                    </span>
+                    <span className="min-w-0">
+                      <span className={`block truncate text-sm text-ink ${b.is_read ? "font-medium" : "font-bold"}`}>
+                        {b.name}
+                      </span>
+                      <span className="block truncate text-xs text-ink-soft">
+                        {b.service || "General call"}
+                      </span>
+                    </span>
+                  </div>
+                  <StatusBadge status={b.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         {/* recent leads */}
-        <section className="admin-card lg:col-span-2" aria-label="Recent leads">
+        <section className="admin-card" aria-label="Recent leads">
           <div className="flex items-center justify-between">
             <h2 className="font-display font-semibold text-ink">Recent leads</h2>
             <Link href="/admin/leads" className="text-xs font-semibold text-brand hover:underline">
@@ -160,6 +218,7 @@ export default function DashboardPage() {
             </ul>
           )}
         </section>
+        </div>
       </div>
     </>
   );

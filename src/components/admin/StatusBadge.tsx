@@ -5,6 +5,10 @@ const STYLES: Record<string, string> = {
   archived: "bg-ink/8 text-ink-soft",
   draft: "bg-ink/8 text-ink-soft",
   published: "bg-emerald-100 text-emerald-700",
+  pending: "bg-amber-100 text-amber-700",
+  confirmed: "bg-brand-faint text-brand",
+  completed: "bg-emerald-100 text-emerald-700",
+  cancelled: "bg-red-100 text-red-600",
 };
 
 export default function StatusBadge({ status }: { status: string }) {

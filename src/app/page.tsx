@@ -5,6 +5,7 @@ import WhyUs from "@/components/site/WhyUs";
 import Portfolio from "@/components/site/Portfolio";
 import Process from "@/components/site/Process";
 import Pricing from "@/components/site/Pricing";
+import BookingSection from "@/components/site/BookingSection";
 import Testimonials from "@/components/site/Testimonials";
 import CtaBanner from "@/components/site/CtaBanner";
 import ContactSection from "@/components/site/ContactSection";
@@ -55,6 +56,7 @@ export default function HomePage() {
         <Portfolio items={portfolio} />
         <Process />
         <Pricing tiers={pricing} />
+        <BookingSection serviceOptions={services.map((s) => s.title)} />
         <Testimonials testimonials={testimonials} />
         <CtaBanner />
         <ContactSection serviceOptions={services.map((s) => s.title)} settings={settings} />

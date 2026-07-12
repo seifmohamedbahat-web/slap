@@ -99,6 +99,20 @@ function migrate(db: Database.Database) {
       published INTEGER NOT NULL DEFAULT 1
     );
 
+    CREATE TABLE IF NOT EXISTS bookings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT NOT NULL DEFAULT '',
+      service TEXT NOT NULL DEFAULT '',
+      date TEXT NOT NULL,
+      time TEXT NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'pending',
+      is_read INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL DEFAULT ''
@@ -366,6 +380,31 @@ export type PortfolioItem = {
   published: number;
 };
 
+export type Booking = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  service: string;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:MM
+  notes: string;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  is_read: number;
+  created_at: string;
+};
+
+export type Customer = {
+  email: string;
+  name: string;
+  phone: string;
+  leads: number;
+  bookings: number;
+  services: string;
+  first_seen: string;
+  last_activity: string;
+};
+
 export type PricingTier = {
   id: number;
   name: string;
@@ -433,6 +472,75 @@ export function getSettings(): Record<string, string> {
     value: string;
   }[];
   return Object.fromEntries(rows.map((r) => [r.key, r.value]));
+}
+
+/** Appointment slots offered on the public site (also validated server-side). */
+export const BOOKING_SLOTS = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+] as const;
+
+export function isSlotTaken(date: string, time: string): boolean {
+  const row = getDb()
+    .prepare(
+      "SELECT COUNT(*) AS n FROM bookings WHERE date = ? AND time = ? AND status != 'cancelled'"
+    )
+    .get(date, time) as { n: number };
+  return row.n > 0;
+}
+
+export function getTakenSlots(date: string): string[] {
+  const rows = getDb()
+    .prepare("SELECT time FROM bookings WHERE date = ? AND status != 'cancelled'")
+    .all(date) as { time: string }[];
+  return rows.map((r) => r.time);
+}
+
+export function createBooking(b: {
+  name: string;
+  email: string;
+  phone: string;
+  service: string;
+  date: string;
+  time: string;
+  notes: string;
+}) {
+  getDb()
+    .prepare(
+      "INSERT INTO bookings (name, email, phone, service, date, time, notes) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    )
+    .run(b.name, b.email, b.phone, b.service, b.date, b.time, b.notes);
+}
+
+/** One row per unique email across leads and bookings. */
+export function getCustomers(): Customer[] {
+  return getDb()
+    .prepare(
+      `SELECT
+         lower(email) AS email,
+         MAX(name) AS name,
+         MAX(phone) AS phone,
+         SUM(kind = 'lead') AS leads,
+         SUM(kind = 'booking') AS bookings,
+         GROUP_CONCAT(DISTINCT NULLIF(service, '')) AS services,
+         MIN(created_at) AS first_seen,
+         MAX(created_at) AS last_activity
+       FROM (
+         SELECT name, email, phone, service, created_at, 'lead' AS kind FROM leads
+         UNION ALL
+         SELECT name, email, phone, service, created_at, 'booking' AS kind FROM bookings
+       )
+       GROUP BY lower(email)
+       ORDER BY last_activity DESC`
+    )
+    .all() as Customer[];
 }
 
 export function recordPageView() {

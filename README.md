@@ -44,8 +44,10 @@ can be added later without a migration.
 
 | Section | What it does |
 |---|---|
-| Dashboard | New-inquiry / lead / quote-request counts, 14-day page-view chart, recent leads |
+| Dashboard | New-inquiry / booking / customer counts, 14-day page-view chart, next appointments, recent leads |
 | Leads & Inquiries | Contact form submissions with status tags (New / Contacted / Closed), mark read, archive, delete |
+| Bookings | Appointments from the “Book a free call” form — date/time, contact info, notes, status (Pending / Confirmed / Completed / Cancelled); double-booked slots are rejected |
+| Customers | Auto-built directory of everyone who inquired or booked (one row per email, with counts and last activity) |
 | Portfolio | Add / edit / delete / reorder projects; image by URL or file upload |
 | Services | Add / edit / delete / reorder services (title, icon, description, price) |
 | Pricing | Edit plan names, prices, feature lists, highlighted plan; add/remove plans |
@@ -55,11 +57,12 @@ can be added later without a migration.
 Public pages render fresh from the database on every request
 (`force-dynamic`), so admin changes go live immediately.
 
-## Contact form email
+## Contact form & booking email
 
-Submissions are always stored as leads. `src/lib/email.ts` is a placeholder
-notifier that logs to the server console — swap its body for Resend,
-SendGrid, or nodemailer when you're ready to send real email.
+Contact submissions are stored as leads and appointments as bookings —
+both are always saved even if email fails. `src/lib/email.ts` is a
+placeholder notifier that logs to the server console — swap its body for
+Resend, SendGrid, or nodemailer when you're ready to send real email.
 
 ## Project layout
 

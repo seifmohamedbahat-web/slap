@@ -116,6 +116,11 @@ section[id] {
   @apply mb-1.5 block text-xs font-semibold tracking-wide text-ink-soft uppercase;
 }
 
+/* form control on dark (booking section) surfaces */
+.booking-field {
+  @apply w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 transition focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none;
+}
+
 /* --------------------------------- buttons -------------------------------- */
 
 .btn-primary {

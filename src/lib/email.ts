@@ -1,4 +1,4 @@
-import type { Lead } from "./db";
+import type { Booking, Lead } from "./db";
 
 /**
  * Placeholder email handler.
@@ -25,6 +25,26 @@ export async function sendLeadNotification(
     lead.budget && `Budget: ${lead.budget}`,
     "",
     lead.message,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  console.log(`[email placeholder] To: ${notifyAddress}\nSubject: ${subject}\n${body}`);
+}
+
+/** Same placeholder pattern for appointment bookings. */
+export async function sendBookingNotification(
+  booking: Pick<Booking, "name" | "email" | "phone" | "service" | "date" | "time" | "notes">,
+  notifyAddress: string
+): Promise<void> {
+  const subject = `New appointment: ${booking.name} — ${booking.date} at ${booking.time}`;
+  const body = [
+    `Name: ${booking.name}`,
+    `Email: ${booking.email}`,
+    booking.phone && `Phone: ${booking.phone}`,
+    booking.service && `Service: ${booking.service}`,
+    `When: ${booking.date} at ${booking.time}`,
+    booking.notes && `\n${booking.notes}`,
   ]
     .filter(Boolean)
     .join("\n");

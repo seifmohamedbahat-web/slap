@@ -24,10 +24,16 @@ export default function CtaBanner() {
               Tell us about your project and get a free, no-pressure quote within 24 hours. The
               countdown starts whenever you are.
             </p>
-            <a href="#contact" className="btn-primary mt-9">
-              Start Your Project
-              <Icon name="rocket" size={16} />
-            </a>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+              <a href="#contact" className="btn-primary">
+                Start Your Project
+                <Icon name="rocket" size={16} />
+              </a>
+              <a href="#book" className="btn-dark-ghost">
+                <Icon name="calendar" size={16} />
+                Book a Free Call
+              </a>
+            </div>
           </div>
         </div>
       </Reveal>

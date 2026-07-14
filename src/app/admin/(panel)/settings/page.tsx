@@ -5,7 +5,11 @@ import { saveSettings } from "../../actions";
 
 export const dynamic = "force-dynamic";
 
-const GROUPS: { title: string; fields: { key: string; label: string; placeholder: string; type?: string }[] }[] = [
+const GROUPS: {
+  title: string;
+  note?: string;
+  fields: { key: string; label: string; placeholder: string; type?: string; hint?: string }[];
+}[] = [
   {
     title: "Site identity",
     fields: [
@@ -14,10 +18,23 @@ const GROUPS: { title: string; fields: { key: string; label: string; placeholder
     ],
   },
   {
+    title: "Notifications",
+    note: "Where new contact messages, project requests, and bookings are emailed.",
+    fields: [
+      {
+        key: "notify_email",
+        label: "Notification email",
+        placeholder: "digitaoribionsupport@gmail.com",
+        type: "email",
+        hint: "Every inquiry and booking is sent here with all its details.",
+      },
+    ],
+  },
+  {
     title: "Contact details",
     fields: [
-      { key: "contact_email", label: "Contact email", placeholder: "hello@digitalorbit.agency", type: "email" },
-      { key: "phone", label: "Phone", placeholder: "+1 (555) 010-7788" },
+      { key: "contact_email", label: "Public contact email (shown on the site)", placeholder: "digitaoribionsupport@gmail.com", type: "email" },
+      { key: "phone", label: "Phone", placeholder: "+20 101 264 8914" },
       { key: "address", label: "Location / address", placeholder: "City, Country" },
       { key: "hours", label: "Business hours", placeholder: "Mon–Fri, 9:00–18:00" },
     ],
@@ -46,8 +63,9 @@ export default function SettingsAdminPage() {
       <form action={saveSettings} className="space-y-6">
         {GROUPS.map((group) => (
           <section key={group.title} className="admin-card">
-            <h2 className="font-display mb-5 font-semibold text-ink">{group.title}</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <h2 className="font-display font-semibold text-ink">{group.title}</h2>
+            {group.note && <p className="mt-1 text-xs text-ink-soft">{group.note}</p>}
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {group.fields.map((field) => (
                 <div key={field.key}>
                   <label htmlFor={`setting-${field.key}`} className="field-label">
@@ -61,6 +79,7 @@ export default function SettingsAdminPage() {
                     placeholder={field.placeholder}
                     className="field"
                   />
+                  {field.hint && <p className="mt-1.5 text-xs text-ink-soft">{field.hint}</p>}
                 </div>
               ))}
             </div>

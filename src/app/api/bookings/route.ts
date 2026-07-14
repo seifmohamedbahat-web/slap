@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const settings = getSettings();
-    await sendBookingNotification(booking, settings.contact_email || "hello@digitalorbit.agency");
+    await sendBookingNotification(
+      booking,
+      settings.notify_email || settings.contact_email || "digitaoribionsupport@gmail.com"
+    );
   } catch (err) {
     console.error("Booking email notification failed:", err);
   }

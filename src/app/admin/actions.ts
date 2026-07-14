@@ -291,6 +291,7 @@ const SETTING_KEYS = [
   "site_name",
   "tagline",
   "contact_email",
+  "notify_email",
   "phone",
   "address",
   "hours",

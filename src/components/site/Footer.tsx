@@ -3,13 +3,13 @@ import Logo from "@/components/Logo";
 import type { Service } from "@/lib/db";
 
 const QUICK_LINKS = [
-  { href: "#home", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#portfolio", label: "Portfolio" },
-  { href: "#about", label: "About" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#book", label: "Book a Call" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#services", label: "Services" },
+  { href: "/#portfolio", label: "Portfolio" },
+  { href: "/#about", label: "About" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#book", label: "Book a Call" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Footer({

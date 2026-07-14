@@ -60,9 +60,14 @@ Public pages render fresh from the database on every request
 ## Contact form & booking email
 
 Contact submissions are stored as leads and appointments as bookings —
-both are always saved even if email fails. `src/lib/email.ts` is a
-placeholder notifier that logs to the server console — swap its body for
-Resend, SendGrid, or nodemailer when you're ready to send real email.
+both are always saved even if email fails. Every new inquiry and booking
+is also emailed (with all details) to the **Notification email** set in
+admin Settings (default: `digitaoribionsupport@gmail.com`).
+
+Delivery uses the Resend API when `RESEND_API_KEY` is set (free tier at
+resend.com; set `EMAIL_FROM` to a sender on your verified domain). Without
+a key, notifications are logged to the server console so nothing is lost
+in development. See `src/lib/email.ts`.
 
 ## Project layout
 

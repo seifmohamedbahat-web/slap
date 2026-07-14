@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
   // already stored and visible in the admin panel.
   try {
     const settings = getSettings();
-    await sendLeadNotification(lead, settings.contact_email || "hello@digitalorbit.agency");
+    await sendLeadNotification(
+      lead,
+      settings.notify_email || settings.contact_email || "digitaoribionsupport@gmail.com"
+    );
   } catch (err) {
     console.error("Lead email notification failed:", err);
   }

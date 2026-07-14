@@ -316,23 +316,23 @@ function seed(db: Database.Database) {
     rows.forEach((r, i) => insert.run(r[0], r[1], r[2], r[3], r[4], i));
   }
 
-  const hasSettings = db.prepare("SELECT COUNT(*) AS n FROM settings").get() as { n: number };
-  if (hasSettings.n === 0) {
-    const insert = db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
-    const defaults: Record<string, string> = {
-      site_name: "DigitalOrbit",
-      tagline: "Websites & Digital Services",
-      contact_email: "hello@digitalorbit.agency",
-      phone: "+1 (555) 010-7788",
-      address: "Remote-first · Serving clients worldwide",
-      hours: "Mon–Fri, 9:00–18:00",
-      social_facebook: "https://facebook.com/digitalorbit",
-      social_instagram: "https://instagram.com/digitalorbit",
-      social_twitter: "https://x.com/digitalorbit",
-      social_linkedin: "https://linkedin.com/company/digitalorbit",
-    };
-    for (const [k, v] of Object.entries(defaults)) insert.run(k, v);
-  }
+  // Missing keys are added without touching existing values, so new
+  // settings (like notify_email) appear on already-initialized databases.
+  const insertSetting = db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)");
+  const settingDefaults: Record<string, string> = {
+    site_name: "DigitalOrbit",
+    tagline: "Websites & Digital Services",
+    contact_email: "digitaoribionsupport@gmail.com",
+    notify_email: "digitaoribionsupport@gmail.com",
+    phone: "+20 101 264 8914",
+    address: "Remote-first · Serving clients worldwide",
+    hours: "Mon–Fri, 9:00–18:00",
+    social_facebook: "https://facebook.com/digitalorbit",
+    social_instagram: "https://instagram.com/digitalorbit",
+    social_twitter: "https://x.com/digitalorbit",
+    social_linkedin: "https://linkedin.com/company/digitalorbit",
+  };
+  for (const [k, v] of Object.entries(settingDefaults)) insertSetting.run(k, v);
 }
 
 /* ---------------------------------- types --------------------------------- */

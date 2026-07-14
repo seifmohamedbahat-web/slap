@@ -1,53 +1,76 @@
 import type { Booking, Lead } from "./db";
 
 /**
- * Placeholder email handler.
+ * Email notifications for new inquiries and bookings.
  *
- * Swap the body of `sendLeadNotification` for a real provider when ready,
- * e.g. Resend, SendGrid, or plain SMTP via nodemailer:
+ * The destination address is the `notify_email` setting, editable in the
+ * admin panel under Settings → Notifications.
  *
- *   const resend = new Resend(process.env.RESEND_API_KEY);
- *   await resend.emails.send({ from, to, subject, text });
- *
- * The contact API awaits this but never fails the request if email
- * delivery breaks — the lead is already safe in the database.
+ * Delivery: if RESEND_API_KEY is set, mail is sent for real through the
+ * Resend API (https://resend.com — free tier available; set EMAIL_FROM to
+ * a sender on your verified domain). Without a key, the message is logged
+ * to the server console so nothing is silently lost in development.
+ * Callers never fail the user's request on email errors — the lead or
+ * booking is already stored in the database either way.
  */
+async function deliver(to: string, subject: string, text: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.log(
+      `[email placeholder — set RESEND_API_KEY to send for real]\nTo: ${to}\nSubject: ${subject}\n${text}`
+    );
+    return;
+  }
+
+  const from = process.env.EMAIL_FROM || "DigitalOrbit <onboarding@resend.dev>";
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from, to, subject, text }),
+  });
+  if (!res.ok) {
+    throw new Error(`Resend API ${res.status}: ${await res.text()}`);
+  }
+}
+
 export async function sendLeadNotification(
   lead: Pick<Lead, "name" | "email" | "phone" | "service" | "budget" | "message">,
   notifyAddress: string
 ): Promise<void> {
   const subject = `New inquiry from ${lead.name}${lead.service ? ` — ${lead.service}` : ""}`;
-  const body = [
+  const lines = [
+    "You have a new message from the DigitalOrbit website:",
+    "",
     `Name: ${lead.name}`,
     `Email: ${lead.email}`,
-    lead.phone && `Phone: ${lead.phone}`,
-    lead.service && `Service: ${lead.service}`,
-    lead.budget && `Budget: ${lead.budget}`,
-    "",
-    lead.message,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ];
+  if (lead.phone) lines.push(`Phone: ${lead.phone}`);
+  if (lead.service) lines.push(`Service: ${lead.service}`);
+  if (lead.budget) lines.push(`Budget: ${lead.budget}`);
+  lines.push("", lead.message, "", "— Manage this lead in the admin panel: /admin/leads");
 
-  console.log(`[email placeholder] To: ${notifyAddress}\nSubject: ${subject}\n${body}`);
+  await deliver(notifyAddress, subject, lines.join("\n"));
 }
 
-/** Same placeholder pattern for appointment bookings. */
 export async function sendBookingNotification(
   booking: Pick<Booking, "name" | "email" | "phone" | "service" | "date" | "time" | "notes">,
   notifyAddress: string
 ): Promise<void> {
   const subject = `New appointment: ${booking.name} — ${booking.date} at ${booking.time}`;
-  const body = [
+  const lines = [
+    "Someone booked a call on the DigitalOrbit website:",
+    "",
     `Name: ${booking.name}`,
     `Email: ${booking.email}`,
-    booking.phone && `Phone: ${booking.phone}`,
-    booking.service && `Service: ${booking.service}`,
-    `When: ${booking.date} at ${booking.time}`,
-    booking.notes && `\n${booking.notes}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ];
+  if (booking.phone) lines.push(`Phone: ${booking.phone}`);
+  if (booking.service) lines.push(`Topic: ${booking.service}`);
+  lines.push(`When: ${booking.date} at ${booking.time}`);
+  if (booking.notes) lines.push("", booking.notes);
+  lines.push("", "— Manage this booking in the admin panel: /admin/bookings");
 
-  console.log(`[email placeholder] To: ${notifyAddress}\nSubject: ${subject}\n${body}`);
+  await deliver(notifyAddress, subject, lines.join("\n"));
 }

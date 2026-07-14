@@ -25,8 +25,8 @@ export default function CtaBanner() {
               countdown starts whenever you are.
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-              <a href="#contact" className="btn-primary">
-                Start Your Project
+              <a href="/contact" className="btn-primary">
+                Start Your Project Now
                 <Icon name="rocket" size={16} />
               </a>
               <a href="#book" className="btn-dark-ghost">

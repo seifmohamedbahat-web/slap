@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import Icon from "@/components/Icon";
 
+// "/#section" links work from every page, not just the homepage
 const LINKS = [
-  { href: "#home", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#portfolio", label: "Portfolio" },
-  { href: "#about", label: "About" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#services", label: "Services" },
+  { href: "/#portfolio", label: "Portfolio" },
+  { href: "/#about", label: "About" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -55,7 +56,7 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <a href="#contact" className="btn-primary hidden !px-5 !py-2.5 sm:inline-flex">
+          <a href="/contact" className="btn-primary hidden !px-5 !py-2.5 sm:inline-flex">
             Get a Free Quote
           </a>
           <button
@@ -91,7 +92,7 @@ export default function Navbar() {
             </li>
           ))}
           <li className="pt-2">
-            <a href="#contact" onClick={() => setOpen(false)} className="btn-primary w-full">
+            <a href="/contact" onClick={() => setOpen(false)} className="btn-primary w-full">
               Get a Free Quote
             </a>
           </li>

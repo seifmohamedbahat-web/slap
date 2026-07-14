@@ -12,13 +12,14 @@ Brand: neon lime green (`#B6FF00`) on true black, tagline **"Welcome to ur zone.
 | `services.html` | Services — 8 detailed service blocks, access schedule, plan comparison |
 | `about.html` | About — story, values, facility, full coach grid, milestones |
 | `contact.html` | Contact — details, WhatsApp-routed form, full-width map, FAQ |
+| `team.html` | The Team — full coach grid (linked from "Meet The Full Team") |
 
 ## Stack
 
 Static HTML + CSS + vanilla JS. No build step — open `index.html` or serve the folder.
 
 - `assets/css/style.css` — full design system (dark neon theme, mobile-first, RTL-friendly logical properties)
-- `assets/js/animations.js` — GSAP + ScrollTrigger: reveals, counters, testimonial marquee, lightbox, mobile nav, contact-form → WhatsApp handoff
+- `assets/js/animations.js` — GSAP + ScrollTrigger: reveals, counters, testimonial marquee, lightbox, mobile nav, contact-form → WhatsApp handoff, hero parallax, scroll progress bar, service info bubbles
 - `assets/js/scene-hero.js` — Three.js hero scenes per page (bolt field / dumbbells / community sphere / map pin)
 - `assets/vendor/` — gsap, ScrollTrigger, three.js (local, no CDN)
 - `assets/fonts/` — self-hosted Archivo Black (headings) + Inter variable (body), latin subset

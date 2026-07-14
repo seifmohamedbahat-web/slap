@@ -41,6 +41,7 @@
 <body data-page="home">
 
 <a class="skip-link" href="#main">Skip to content</a>
+<div class="scroll-progress" aria-hidden="true"></div>
 
 <header class="site-header">
   <div class="container nav-inner">
@@ -83,7 +84,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Join Now
       </a>
-      <a href="services.html#plans" class="btn btn-outline btn-lg">View Plans</a>
+      <a href="#plans" class="btn btn-outline btn-lg">View Plans</a>
     </div>
     <div class="hero-badges">
       <span class="badge-247"><span class="dot" aria-hidden="true"></span>Open 24/7</span>
@@ -148,6 +149,28 @@
   </div>
 </section>
 
+<!-- ============ NEON TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="ticker-seq">
+      <span>Open 24/7</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Welcome to ur zone</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Ladies-only hours daily</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Real coaches</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Recovery zone</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Faisal St · Giza</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div class="ticker-seq">
+      <span>Open 24/7</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Welcome to ur zone</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Ladies-only hours daily</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Real coaches</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Recovery zone</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Faisal St · Giza</span><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+  </div>
+</div>
+
 <!-- ============ WHY FIT ZONE ============ -->
 <section class="section">
   <div class="container">
@@ -210,7 +233,7 @@
         <div class="service-card-body">
           <h3>24/7 Strength &amp; Cardio Floor</h3>
           <p>Free weights, machines and a full cardio zone — open every hour of every day.</p>
-          <a class="link-more" href="services.html#access-247">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a class="link-more" href="services.html#access-247" data-bubble="svc-floor">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
       </article>
       <article class="service-card tilt">
@@ -221,7 +244,7 @@
         <div class="service-card-body">
           <h3>Personal Coaching</h3>
           <p>1-on-1 programs built around your goal — strength, fat loss or performance.</p>
-          <a class="link-more" href="services.html#coaching">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a class="link-more" href="services.html#coaching" data-bubble="svc-coaching">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
       </article>
       <article class="service-card tilt">
@@ -232,7 +255,7 @@
         <div class="service-card-body">
           <h3>Ladies-Only Sessions</h3>
           <p>A private daily window reserved for women — train with full comfort and privacy.</p>
-          <a class="link-more" href="services.html#ladies-hours">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a class="link-more" href="services.html#ladies-hours" data-bubble="svc-ladies">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
       </article>
       <article class="service-card tilt">
@@ -243,7 +266,7 @@
         <div class="service-card-body">
           <h3>Recovery</h3>
           <p>Stretching, massage and recovery tools so you come back stronger, not sorer.</p>
-          <a class="link-more" href="services.html#recovery">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a class="link-more" href="services.html#recovery" data-bubble="svc-recovery">Learn More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
       </article>
     </div>
@@ -332,13 +355,13 @@
       </article>
     </div>
     <div class="center mt-2">
-      <a href="about.html#coaches" class="btn btn-outline">Meet The Full Team</a>
+      <a href="team.html" class="btn btn-outline">Meet The Full Team</a>
     </div>
   </div>
 </section>
 
 <!-- ============ PLANS TEASER ============ -->
-<section class="section" id="plans-teaser">
+<section class="section" id="plans">
   <div class="container">
     <div class="section-head center">
       <div class="eyebrow"><svg class="bolt-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Memberships</div>
@@ -353,6 +376,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full 24/7 gym access</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ladies-only window included</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Locker room access</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Join or renew online</li>
         </ul>
         <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20I%27d%20like%20the%20Monthly%20plan%20price." class="btn btn-outline" target="_blank" rel="noopener">Ask About Pricing</a>
       </article>
@@ -364,6 +388,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Everything in Monthly</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Coach-guided starter program</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority event registration</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Recovery intro session</li>
         </ul>
         <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20I%27d%20like%20the%20Quarterly%20plan%20price." class="btn btn-primary" target="_blank" rel="noopener">Ask About Pricing</a>
       </article>
@@ -374,6 +399,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Everything in Quarterly</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Membership freeze option</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Best per-month rate</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Exclusive member offers</li>
         </ul>
         <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20I%27d%20like%20the%20Annual%20plan%20price." class="btn btn-outline" target="_blank" rel="noopener">Ask About Pricing</a>
       </article>
@@ -536,6 +562,7 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="services.html">Services</a></li>
           <li><a href="services.html#plans">Membership Plans</a></li>
+          <li><a href="team.html">The Team</a></li>
           <li><a href="about.html">About Us</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
@@ -575,6 +602,90 @@
   <button class="lightbox-close" aria-label="Close preview">×</button>
   <div class="lightbox-inner"></div>
 </div>
+
+<!-- Info bubble (opens from the "Learn More" links in the services preview) -->
+<div class="bubble-overlay" role="dialog" aria-modal="true" aria-label="Service details">
+  <div class="bubble-wrap">
+    <div class="bubble">
+      <button class="bubble-close" aria-label="Close">×</button>
+      <div class="bubble-body"></div>
+    </div>
+    <div class="bubble-tail" aria-hidden="true"></div>
+  </div>
+</div>
+
+<!-- Bubble contents — replace .ph placeholders with real photos when supplied -->
+<template data-bubble-content="svc-floor">
+  <figure class="ph" role="img" aria-label="24/7 strength and cardio floor — photo coming soon">
+    <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="8" y="6" width="6" height="20" rx="2"/><rect x="14" y="10" width="5" height="12" rx="2"/><rect x="50" y="6" width="6" height="20" rx="2"/><rect x="45" y="10" width="5" height="12" rx="2"/><line x1="19" y1="16" x2="45" y2="16"/></svg>
+    <figcaption>24/7 Gym Floor</figcaption>
+  </figure>
+  <h3>24/7 Strength &amp; Cardio <span class="neon">Floor</span></h3>
+  <p>The whole floor is yours around the clock: a full free-weights zone with racks, bars and dumbbells, plate-loaded and cable machines for every muscle group, plus a dedicated cardio zone with treadmills and bikes. Train at 6 AM before work or 2 AM after a night shift — entry is secure and supervised at every hour.</p>
+  <ul class="service-points">
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full dumbbell range, squat racks and benches</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Machines and cables for every muscle group</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Quiet off-peak hours if you hate crowded gyms</li>
+  </ul>
+  <div class="cta-actions" style="justify-content:flex-start;">
+    <a href="services.html#access-247" class="btn btn-primary btn-sm">Full Details</a>
+    <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20Tell%20me%20about%20the%2024/7%20floor." class="btn btn-outline btn-sm" target="_blank" rel="noopener">WhatsApp Us</a>
+  </div>
+</template>
+
+<template data-bubble-content="svc-coaching">
+  <figure class="ph" role="img" aria-label="Personal coaching — photo coming soon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <figcaption>1-on-1 Coaching</figcaption>
+  </figure>
+  <h3>Personal <span class="neon">Coaching</span></h3>
+  <p>Fit Zone runs on its coaching team — not a tour on day one and silence after. Tell a coach your goal and you get a customized program, 1-on-1 sessions on the floor, and weekly check-ins that keep you accountable until the results show.</p>
+  <ul class="service-points">
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Custom program for strength, fat loss or muscle</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Form corrections and spotting on the floor</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Weekly check-ins and program adjustments</li>
+  </ul>
+  <div class="cta-actions" style="justify-content:flex-start;">
+    <a href="services.html#coaching" class="btn btn-primary btn-sm">Full Details</a>
+    <a href="team.html" class="btn btn-outline btn-sm">Meet The Coaches</a>
+  </div>
+</template>
+
+<template data-bubble-content="svc-ladies">
+  <figure class="ph" role="img" aria-label="Ladies-only sessions — photo coming soon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <figcaption>Ladies-Only Window</figcaption>
+  </figure>
+  <h3>Ladies-Only <span class="neon">Sessions</span></h3>
+  <p>Every single day, a dedicated 6-hour window is reserved exclusively for women — the full gym floor, every machine and the free-weights zone, in complete privacy. Staffed and set up for comfort, with a dedicated ladies' program coach leading the window.</p>
+  <ul class="service-points">
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Private 6-hour daily window, women only</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full access to the entire floor — nothing off-limits</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Call 0115 425 1716 for this week's exact times</li>
+  </ul>
+  <div class="cta-actions" style="justify-content:flex-start;">
+    <a href="services.html#ladies-hours" class="btn btn-primary btn-sm">Full Details</a>
+    <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20What%20are%20the%20ladies-only%20hours%3F" class="btn btn-outline btn-sm" target="_blank" rel="noopener">Ask About Times</a>
+  </div>
+</template>
+
+<template data-bubble-content="svc-recovery">
+  <figure class="ph" role="img" aria-label="Recovery zone — photo coming soon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <figcaption>Recovery Zone</figcaption>
+  </figure>
+  <h3>Recovery <span class="neon">Zone</span></h3>
+  <p>Most gyms stop caring after your last rep — Fit Zone doesn't. The recovery corner covers stretching and mobility, massage and recovery tools, so your muscles bounce back faster and you can train more often without burning out or getting hurt.</p>
+  <ul class="service-points">
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Post-workout stretching and mobility support</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Massage and recovery tools after heavy sessions</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Guidance on soreness, rest and injury prevention</li>
+  </ul>
+  <div class="cta-actions" style="justify-content:flex-start;">
+    <a href="services.html#recovery" class="btn btn-primary btn-sm">Full Details</a>
+    <a href="https://wa.me/201154251716?text=Hi%20Fit%20Zone!%20What%20recovery%20services%20do%20you%20offer%3F" class="btn btn-outline btn-sm" target="_blank" rel="noopener">WhatsApp Us</a>
+  </div>
+</template>
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>

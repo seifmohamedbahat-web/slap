@@ -466,7 +466,8 @@ h1, h2, h3, .display {
 
 .plan-card {
   position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 2rem 1.7rem; display: flex; flex-direction: column; gap: 1.1rem;
+  padding: 2.8rem 2rem 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+  min-height: 34rem;
   transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 .plan-card:hover { transform: translateY(-5px); border-color: var(--line-neon); }
@@ -477,10 +478,10 @@ h1, h2, h3, .display {
   letter-spacing: 0.16em; text-transform: uppercase; padding: 0.32rem 0.9rem; border-radius: 999px;
   box-shadow: 0 0 18px var(--neon-glow); white-space: nowrap;
 }
-.plan-name { font-size: 1.1rem; letter-spacing: 0.03em; }
-.plan-price { font-family: var(--font-head); font-size: 1.8rem; color: var(--white); line-height: 1; }
-.plan-price small { display: block; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.45rem; }
-.plan-list { display: grid; gap: 0.55rem; flex: 1; }
+.plan-name { font-size: 1.15rem; letter-spacing: 0.03em; }
+.plan-price { font-family: var(--font-head); font-size: 2.1rem; color: var(--white); line-height: 1; }
+.plan-price small { display: block; font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.55rem; }
+.plan-list { display: grid; gap: 0.85rem; flex: 1; align-content: start; }
 .plan-list li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--muted); font-size: 0.92rem; }
 .plan-list svg { width: 16px; height: 16px; color: var(--neon); flex: none; margin-top: 0.22rem; }
 
@@ -717,3 +718,97 @@ h1, h2, h3, .display {
 .mt-2 { margin-top: 2rem; }
 .mt-1 { margin-top: 1rem; }
 .center { text-align: center; }
+
+/* ---------- Scroll progress bar ---------- */
+.scroll-progress {
+  position: fixed; top: 0; inset-inline-start: 0; z-index: 140;
+  height: 3px; width: 0;
+  background: var(--neon);
+  box-shadow: 0 0 12px var(--neon-glow), 0 0 30px rgba(182, 255, 0, 0.25);
+  pointer-events: none;
+}
+
+/* ---------- Neon ticker banner ---------- */
+.ticker {
+  overflow: hidden; background: var(--bg-2);
+  border-block: 1px solid var(--line-neon);
+  padding-block: 0.85rem;
+}
+.ticker-track { display: flex; width: max-content; animation: tickerMove 30s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-seq { display: flex; align-items: center; gap: 2.6rem; padding-inline-end: 2.6rem; }
+.ticker-seq span {
+  font-family: var(--font-head); text-transform: uppercase; white-space: nowrap;
+  font-size: 0.9rem; letter-spacing: 0.06em; color: var(--white);
+}
+.ticker-seq svg { width: 15px; height: 15px; color: var(--neon); flex: none; filter: drop-shadow(0 0 8px var(--neon-glow)); }
+@keyframes tickerMove { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+/* ---------- Button shine sweep ---------- */
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::before {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 45%; left: -70%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg); transition: left 0.55s ease;
+}
+.btn-primary:hover::before { left: 135%; }
+
+/* ---------- Stat glow pulse ---------- */
+@keyframes statPulse {
+  0%, 100% { text-shadow: 0 0 22px var(--neon-glow); }
+  50% { text-shadow: 0 0 36px rgba(182, 255, 0, 0.7), 0 0 90px rgba(182, 255, 0, 0.28); }
+}
+.stat-num { animation: statPulse 3.4s ease-in-out infinite; }
+
+/* ---------- Feature icon wiggle on hover ---------- */
+@keyframes icoWiggle {
+  25% { transform: rotate(-8deg) scale(1.12); }
+  75% { transform: rotate(8deg) scale(1.12); }
+}
+.feature-card:hover .feature-ico svg, .value-card:hover .feature-ico svg { animation: icoWiggle 0.5s ease; }
+
+/* ---------- Gentle float for hero badges ---------- */
+@keyframes floatY { 50% { transform: translateY(-5px); } }
+.badge-247 { animation: pulseBadge 3s ease-in-out infinite; }
+@keyframes pulseBadge {
+  0%, 100% { box-shadow: 0 0 26px var(--neon-glow); }
+  50% { box-shadow: 0 0 44px rgba(182, 255, 0, 0.6); }
+}
+
+/* ---------- Info bubble (service pop-ups) ---------- */
+.bubble-overlay {
+  position: fixed; inset: 0; z-index: 150; display: none;
+  background: rgba(3, 3, 3, 0.85); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+  place-items: center; padding: 1.4rem;
+}
+.bubble-overlay.open { display: grid; }
+.bubble-wrap { width: min(720px, 100%); }
+.bubble {
+  position: relative; max-height: 82vh; overflow: auto;
+  background: var(--card); border: 1px solid var(--neon); border-radius: 22px;
+  box-shadow: 0 0 60px rgba(182, 255, 0, 0.22), 0 30px 80px rgba(0, 0, 0, 0.65);
+  padding: 1.5rem;
+  animation: bubblePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  scrollbar-width: thin; scrollbar-color: var(--neon) transparent;
+}
+.bubble-tail {
+  width: 24px; height: 24px; margin: -13px auto 0;
+  background: var(--card);
+  border-right: 1px solid var(--neon); border-bottom: 1px solid var(--neon);
+  transform: rotate(45deg);
+  animation: bubblePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes bubblePop { from { opacity: 0; transform: scale(0.82) translateY(26px); } }
+.bubble .ph { aspect-ratio: 16 / 7; margin-bottom: 1.2rem; }
+.bubble h3 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+.bubble p { color: var(--muted); font-size: 0.95rem; margin-bottom: 0.9rem; }
+.bubble .service-points { margin-bottom: 1.2rem; }
+.bubble-close {
+  position: absolute; top: 0.9rem; inset-inline-end: 0.9rem; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--line-neon); color: var(--neon); font-size: 1.3rem; line-height: 1;
+  display: grid; place-items: center; background: rgba(10, 10, 10, 0.75);
+}
+.bubble-close:hover { background: var(--neon); color: #050505; }
+

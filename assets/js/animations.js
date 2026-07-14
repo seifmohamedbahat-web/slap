@@ -4,11 +4,15 @@
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- Header scroll state ---------- */
+  /* ---------- Header scroll state + progress bar ---------- */
   const header = document.querySelector('.site-header');
+  const progress = document.querySelector('.scroll-progress');
   function onScroll() {
-    if (!header) return;
-    header.classList.toggle('is-scrolled', window.scrollY > 40);
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 40);
+    if (progress) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    }
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -69,6 +73,14 @@
     if (document.querySelector('.hero-strip-card')) {
       heroTl.from('.hero-strip-card', { opacity: 0, y: 30, duration: 0.7 }, '-=0.3');
     }
+  }
+
+  /* Hero parallax: content drifts and fades as you scroll away */
+  if (document.querySelector('.hero .hero-content') && !reducedMotion) {
+    gsap.to('.hero .hero-content', {
+      yPercent: 16, opacity: 0.3, ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
   }
 
   /* Sub-page hero entrance */
@@ -230,6 +242,34 @@
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
     closeBtn.addEventListener('click', closeLightbox);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+  }
+
+  /* ---------- Info bubbles (service pop-ups) ----------
+     Links with [data-bubble] open the matching <template> in a modal
+     bubble instead of navigating. The href stays as a no-JS fallback. */
+  const bubbleOverlay = document.querySelector('.bubble-overlay');
+  if (bubbleOverlay) {
+    const slot = bubbleOverlay.querySelector('.bubble-body');
+    const bubbleClose = bubbleOverlay.querySelector('.bubble-close');
+    function closeBubble() {
+      bubbleOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('[data-bubble]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const tpl = document.querySelector('template[data-bubble-content="' + link.getAttribute('data-bubble') + '"]');
+        if (!tpl) return;
+        e.preventDefault();
+        slot.innerHTML = '';
+        slot.appendChild(tpl.content.cloneNode(true));
+        bubbleOverlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        bubbleClose.focus();
+      });
+    });
+    bubbleOverlay.addEventListener('click', (e) => { if (e.target === bubbleOverlay) closeBubble(); });
+    bubbleClose.addEventListener('click', closeBubble);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBubble(); });
   }
 
   /* ---------- Contact form → WhatsApp handoff ----------

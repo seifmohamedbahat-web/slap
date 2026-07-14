@@ -21,6 +21,7 @@ Static HTML + CSS + vanilla JS. No build step — open `index.html` or serve the
 - `assets/js/animations.js` — GSAP + ScrollTrigger: reveals, counters, testimonial marquee, lightbox, mobile nav, contact-form → WhatsApp handoff
 - `assets/js/scene-hero.js` — Three.js hero scenes per page (bolt field / dumbbells / community sphere / map pin)
 - `assets/vendor/` — gsap, ScrollTrigger, three.js (local, no CDN)
+- `assets/fonts/` — self-hosted Archivo Black (headings) + Inter variable (body), latin subset
 
 Conversion paths: floating WhatsApp button on every page, click-to-call phone links,
 Google Maps embed + directions, and a contact form that opens a prefilled WhatsApp chat

@@ -1,18 +1,17 @@
-/* Keeps It Real Estate — WebGL hero scenes (Three.js, ES module)
-   Renders a distinct luxury real-estate themed 3D scene per page. */
+/* Fit Zone (FZ) — WebGL hero scenes (Three.js, ES module)
+   Neon-lime-on-black, night-gym energy. One scene per page. */
 import * as THREE from '../vendor/three.module.min.js';
 
-const NAVY = 0x0e2c5c;
-const NAVY_DEEP = 0x0a1a3a;
-const SILVER = 0xd9dee6;
-const SILVER_DEEP = 0x9aa1ad;
-const GOLD = 0xb7924a;
+const NEON = 0xb6ff00;
+const NEON_DIM = 0x5a7f00;
+const CHARCOAL = 0x181a14;
+const GREY = 0x2a2d26;
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-function baseSetup(canvas, { alpha = true, cameraZ = 14, fov = 42 } = {}) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha });
+function baseSetup(canvas, { cameraZ = 14, fov = 42 } = {}) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(dpr);
   renderer.setClearColor(0x000000, 0);
 
@@ -20,14 +19,14 @@ function baseSetup(canvas, { alpha = true, cameraZ = 14, fov = 42 } = {}) {
   const camera = new THREE.PerspectiveCamera(fov, canvas.clientWidth / canvas.clientHeight || 1, 0.1, 200);
   camera.position.set(0, 0, cameraZ);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 0.55);
-  const key = new THREE.DirectionalLight(0xffffff, 1.1);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+  const key = new THREE.DirectionalLight(0xffffff, 0.8);
   key.position.set(6, 10, 8);
-  const rim = new THREE.PointLight(GOLD, 1.4, 60);
-  rim.position.set(-8, 4, 6);
-  const fill = new THREE.PointLight(SILVER, 0.7, 60);
-  fill.position.set(4, -6, 6);
-  scene.add(ambient, key, rim, fill);
+  const neonLight = new THREE.PointLight(NEON, 2.2, 70);
+  neonLight.position.set(-6, 5, 8);
+  const fill = new THREE.PointLight(0x445533, 0.6, 60);
+  fill.position.set(5, -6, 5);
+  scene.add(ambient, key, neonLight, fill);
 
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -49,84 +48,107 @@ function baseSetup(canvas, { alpha = true, cameraZ = 14, fov = 42 } = {}) {
   return { renderer, scene, camera, mouse };
 }
 
-function metalMat(color, opts = {}) {
-  return new THREE.MeshStandardMaterial({
-    color, metalness: 0.75, roughness: 0.32, ...opts
-  });
+/* Lightning-bolt extruded shape (the FZ mark motif) */
+function boltGeometry(depth = 0.28) {
+  const pts = [
+    [0.1, 1], [-0.9, -0.2], [0, -0.2], [-0.1, -1], [0.9, 0.2], [0, 0.2]
+  ];
+  const shape = new THREE.Shape();
+  shape.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], pts[i][1]);
+  shape.closePath();
+  return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.03, bevelSegments: 2 });
 }
 
-/* ---------------- HOME: luxury skyline + floating listing sparks ---------------- */
+function neonParticles(count, spread = 22, ySpread = [-3, 9]) {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = THREE.MathUtils.randFloatSpread(spread);
+    positions[i * 3 + 1] = THREE.MathUtils.randFloat(ySpread[0], ySpread[1]);
+    positions[i * 3 + 2] = THREE.MathUtils.randFloatSpread(12) - 2;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const mat = new THREE.PointsMaterial({
+    color: NEON, size: 0.08, transparent: true, opacity: 0.8,
+    sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  return new THREE.Points(geo, mat);
+}
+
+/* ---------------- HOME: neon bolt field over a glowing floor grid ---------------- */
 function buildHomeScene(canvas) {
-  const { renderer, scene, camera, mouse } = baseSetup(canvas, { cameraZ: 19 });
+  const { renderer, scene, camera, mouse } = baseSetup(canvas, { cameraZ: 15 });
 
   const group = new THREE.Group();
-  group.position.x = 6.5;
+  group.position.x = 5.2;
   scene.add(group);
 
-  const count = 26;
-  const towers = [];
-  for (let i = 0; i < count; i++) {
-    const w = THREE.MathUtils.randFloat(0.5, 1.1);
-    const h = THREE.MathUtils.randFloat(1.5, 8);
-    const d = THREE.MathUtils.randFloat(0.5, 1.1);
-    const geo = new THREE.BoxGeometry(w, h, d);
-    const isAccent = i % 6 === 0;
-    const mat = metalMat(isAccent ? SILVER : NAVY, { roughness: isAccent ? 0.2 : 0.5, metalness: isAccent ? 0.9 : 0.5 });
-    const mesh = new THREE.Mesh(geo, mat);
-    /* bias the arc so towers cluster to the right/rear of the frame,
-       leaving the left third clear for the headline */
-    const angle = -Math.PI * 0.55 + (i / count) * Math.PI * 1.3;
-    const radius = THREE.MathUtils.randFloat(4.5, 8.5);
-    mesh.position.set(Math.cos(angle) * radius, -h / 2 + THREE.MathUtils.randFloat(-0.5, 0.5), Math.sin(angle) * radius * 0.4 - 2);
-    mesh.userData.baseY = mesh.position.y;
-    mesh.userData.speed = THREE.MathUtils.randFloat(0.4, 1.1);
-    mesh.userData.offset = Math.random() * Math.PI * 2;
-    group.add(mesh);
-    towers.push(mesh);
+  // one hero bolt, fully lit neon — flickers like a sign
+  const heroBoltMat = new THREE.MeshBasicMaterial({ color: NEON, transparent: true, opacity: 0.95 });
+  const heroBolt = new THREE.Mesh(boltGeometry(0.35), heroBoltMat);
+  heroBolt.scale.setScalar(2.6);
+  heroBolt.position.set(0, 0.6, 0);
+  group.add(heroBolt);
 
-    const edges = new THREE.EdgesGeometry(geo);
-    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.18 }));
-    mesh.add(line);
+  // satellite bolts: dark bodies with neon edges (unlit "sign off" look)
+  const bolts = [];
+  for (let i = 0; i < 9; i++) {
+    const geo = boltGeometry(0.22);
+    const body = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: CHARCOAL, metalness: 0.6, roughness: 0.45 }));
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo, 20),
+      new THREE.LineBasicMaterial({ color: NEON, transparent: true, opacity: 0.55 })
+    );
+    body.add(edges);
+    const angle = (i / 9) * Math.PI * 2;
+    const radius = THREE.MathUtils.randFloat(3.2, 6.4);
+    body.position.set(Math.cos(angle) * radius, THREE.MathUtils.randFloat(-2.5, 4.5), Math.sin(angle) * 2.4 - 1.5);
+    body.scale.setScalar(THREE.MathUtils.randFloat(0.5, 1.15));
+    body.rotation.z = THREE.MathUtils.randFloat(-0.5, 0.5);
+    body.userData = {
+      baseY: body.position.y,
+      speed: THREE.MathUtils.randFloat(0.4, 1.0),
+      offset: Math.random() * Math.PI * 2,
+      spin: THREE.MathUtils.randFloat(-0.004, 0.004)
+    };
+    group.add(body);
+    bolts.push(body);
   }
 
-  // sparkle particles = "listings"
-  const sparkCount = 90;
-  const positions = new Float32Array(sparkCount * 3);
-  for (let i = 0; i < sparkCount; i++) {
-    positions[i * 3] = THREE.MathUtils.randFloatSpread(20);
-    positions[i * 3 + 1] = THREE.MathUtils.randFloat(-2, 9);
-    positions[i * 3 + 2] = THREE.MathUtils.randFloatSpread(10) - 2;
-  }
-  const sparkGeo = new THREE.BufferGeometry();
-  sparkGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const sparkMat = new THREE.PointsMaterial({ color: GOLD, size: 0.09, transparent: true, opacity: 0.85, sizeAttenuation: true });
-  const sparks = new THREE.Points(sparkGeo, sparkMat);
+  const sparks = neonParticles(150);
   scene.add(sparks);
 
-  const ringGeo = new THREE.RingGeometry(9.6, 9.68, 90);
-  const ringMat = new THREE.MeshBasicMaterial({ color: SILVER_DEEP, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = Math.PI / 2.15;
-  ring.position.y = -3.4;
-  scene.add(ring);
-
-  group.rotation.y = -0.4;
+  const grid = new THREE.GridHelper(40, 34, NEON_DIM, GREY);
+  grid.position.y = -4.2;
+  grid.material.transparent = true;
+  grid.material.opacity = 0.22;
+  scene.add(grid);
 
   const clock = new THREE.Clock();
+  let nextFlicker = 2 + Math.random() * 4;
+  let flickerEnd = 0;
   function tick() {
     const t = clock.getElapsedTime();
     if (!reducedMotion) {
       group.rotation.y += 0.0012;
-      towers.forEach((m) => {
-        m.position.y = m.userData.baseY + Math.sin(t * m.userData.speed + m.userData.offset) * 0.18;
+      heroBolt.rotation.y = Math.sin(t * 0.4) * 0.35;
+      heroBolt.position.y = 0.6 + Math.sin(t * 0.8) * 0.2;
+
+      // neon-sign flicker: brief random dips in the hero bolt's brightness
+      if (t > nextFlicker) { flickerEnd = t + 0.18; nextFlicker = t + 3 + Math.random() * 5; }
+      heroBoltMat.opacity = t < flickerEnd ? 0.35 + Math.random() * 0.5 : 0.95;
+
+      bolts.forEach((m) => {
+        m.position.y = m.userData.baseY + Math.sin(t * m.userData.speed + m.userData.offset) * 0.3;
+        m.rotation.y += m.userData.spin;
       });
       sparks.rotation.y += 0.0006;
-      ring.rotation.z += 0.0009;
       mouse.x += (mouse.tx - mouse.x) * 0.04;
       mouse.y += (mouse.ty - mouse.y) * 0.04;
-      camera.position.x = mouse.x * 1.6;
-      camera.position.y = 1.2 - mouse.y * 1.1;
-      camera.lookAt(0, 0.5, 0);
+      camera.position.x = mouse.x * 1.5;
+      camera.position.y = 0.8 - mouse.y * 1.0;
+      camera.lookAt(0, 0.4, 0);
     }
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
@@ -134,50 +156,74 @@ function buildHomeScene(canvas) {
   tick();
 }
 
-/* ---------------- LISTINGS: floating property panels ---------------- */
-function buildListingsScene(canvas) {
+/* ---------------- SERVICES: floating dumbbells ---------------- */
+function makeDumbbell() {
+  const db = new THREE.Group();
+  const dark = new THREE.MeshStandardMaterial({ color: CHARCOAL, metalness: 0.85, roughness: 0.3 });
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 2.5, 20), dark);
+  bar.rotation.z = Math.PI / 2;
+  db.add(bar);
+  [[0.5, 0.95], [0.4, 1.13], [0.3, 1.28]].forEach(([r, x]) => {
+    [-1, 1].forEach((side) => {
+      const plate = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.14, 28), dark);
+      plate.rotation.z = Math.PI / 2;
+      plate.position.x = x * side;
+      db.add(plate);
+      const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.014, 8, 40),
+        new THREE.MeshBasicMaterial({ color: NEON, transparent: true, opacity: 0.7 })
+      );
+      rim.rotation.y = Math.PI / 2;
+      rim.position.x = (x + 0.075) * side;
+      db.add(rim);
+    });
+  });
+  return db;
+}
+
+function buildServicesScene(canvas) {
   const { renderer, scene, camera, mouse } = baseSetup(canvas, { cameraZ: 13 });
   const group = new THREE.Group();
-  group.position.x = 4.5;
+  group.position.x = 5;
   scene.add(group);
 
-  const panels = [];
-  const n = 14;
-  for (let i = 0; i < n; i++) {
-    const geo = new THREE.BoxGeometry(1.9, 1.25, 0.06);
-    const mat = metalMat(i % 3 === 0 ? GOLD : (i % 2 === 0 ? SILVER : NAVY), { roughness: 0.35 });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(
-      THREE.MathUtils.randFloat(-2, 7),
+  const dumbbells = [];
+  for (let i = 0; i < 6; i++) {
+    const db = makeDumbbell();
+    db.position.set(
+      THREE.MathUtils.randFloat(-2.5, 5.5),
       THREE.MathUtils.randFloatSpread(7),
-      THREE.MathUtils.randFloatSpread(8) - 2
+      THREE.MathUtils.randFloatSpread(7) - 2
     );
-    mesh.rotation.set(Math.random() * 0.6 - 0.3, Math.random() * Math.PI, Math.random() * 0.3 - 0.15);
-    mesh.userData.spin = THREE.MathUtils.randFloat(0.05, 0.18) * (Math.random() > 0.5 ? 1 : -1);
-    mesh.userData.float = THREE.MathUtils.randFloat(0.3, 0.8);
-    mesh.userData.offset = Math.random() * Math.PI * 2;
-    mesh.userData.baseY = mesh.position.y;
-    group.add(mesh);
-    panels.push(mesh);
-
-    const edges = new THREE.EdgesGeometry(geo);
-    mesh.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 })));
+    db.rotation.set(Math.random() * 0.7 - 0.35, Math.random() * Math.PI, Math.random() * 0.6 - 0.3);
+    db.scale.setScalar(THREE.MathUtils.randFloat(0.6, 1.05));
+    db.userData = {
+      baseY: db.position.y,
+      float: THREE.MathUtils.randFloat(0.3, 0.7),
+      offset: Math.random() * Math.PI * 2,
+      spin: THREE.MathUtils.randFloat(0.002, 0.005) * (Math.random() > 0.5 ? 1 : -1)
+    };
+    group.add(db);
+    dumbbells.push(db);
   }
+
+  const sparks = neonParticles(110, 20, [-4, 6]);
+  scene.add(sparks);
 
   const clock = new THREE.Clock();
   function tick() {
     const t = clock.getElapsedTime();
     if (!reducedMotion) {
-      panels.forEach((m) => {
-        m.rotation.y += 0.0025 * m.userData.spin * 10 * 0.01;
-        m.rotation.y += m.userData.spin * 0.003;
-        m.position.y = m.userData.baseY + Math.sin(t * m.userData.float + m.userData.offset) * 0.35;
+      group.rotation.y += 0.0008;
+      dumbbells.forEach((db) => {
+        db.rotation.y += db.userData.spin;
+        db.position.y = db.userData.baseY + Math.sin(t * db.userData.float + db.userData.offset) * 0.35;
       });
-      group.rotation.y += 0.0009;
+      sparks.rotation.y += 0.0005;
       mouse.x += (mouse.tx - mouse.x) * 0.04;
       mouse.y += (mouse.ty - mouse.y) * 0.04;
-      camera.position.x = mouse.x * 1.4;
-      camera.position.y = -mouse.y * 1.0;
+      camera.position.x = mouse.x * 1.3;
+      camera.position.y = -mouse.y * 0.9;
       camera.lookAt(0, 0, 0);
     }
     renderer.render(scene, camera);
@@ -186,18 +232,18 @@ function buildListingsScene(canvas) {
   tick();
 }
 
-/* ---------------- ABOUT: trust network sphere ---------------- */
+/* ---------------- ABOUT: community network sphere ---------------- */
 function buildAboutScene(canvas) {
   const { renderer, scene, camera, mouse } = baseSetup(canvas, { cameraZ: 13 });
   const group = new THREE.Group();
-  group.position.x = 7;
+  group.position.x = 6.5;
   scene.add(group);
 
   const radius = 4.2;
-  const nodeCount = 60;
+  const nodeCount = 64;
   const nodePositions = [];
-  const nodeGeo = new THREE.SphereGeometry(0.045, 8, 8);
-  const nodeMat = new THREE.MeshStandardMaterial({ color: GOLD, emissive: 0x3a2a10, metalness: 0.6, roughness: 0.4 });
+  const nodeGeo = new THREE.SphereGeometry(0.05, 8, 8);
+  const nodeMat = new THREE.MeshBasicMaterial({ color: NEON });
   for (let i = 0; i < nodeCount; i++) {
     const phi = Math.acos(-1 + (2 * i) / nodeCount);
     const theta = Math.sqrt(nodeCount * Math.PI) * phi;
@@ -212,7 +258,7 @@ function buildAboutScene(canvas) {
     group.add(node);
   }
 
-  const lineMat = new THREE.LineBasicMaterial({ color: SILVER_DEEP, transparent: true, opacity: 0.22 });
+  const lineMat = new THREE.LineBasicMaterial({ color: NEON_DIM, transparent: true, opacity: 0.3 });
   const linePts = [];
   for (let i = 0; i < nodePositions.length; i++) {
     for (let j = i + 1; j < nodePositions.length; j++) {
@@ -221,15 +267,18 @@ function buildAboutScene(canvas) {
       }
     }
   }
-  const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-  group.add(new THREE.LineSegments(lineGeo, lineMat));
+  group.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(linePts), lineMat));
 
-  const coreGeo = new THREE.IcosahedronGeometry(1.6, 1);
-  const coreMat = metalMat(NAVY, { roughness: 0.25, metalness: 0.85 });
-  const core = new THREE.Mesh(coreGeo, coreMat);
+  const coreGeo = new THREE.IcosahedronGeometry(1.7, 1);
+  const core = new THREE.Mesh(coreGeo, new THREE.MeshStandardMaterial({ color: CHARCOAL, metalness: 0.8, roughness: 0.3 }));
+  core.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(coreGeo),
+    new THREE.LineBasicMaterial({ color: NEON, transparent: true, opacity: 0.65 })
+  ));
   group.add(core);
-  const coreEdges = new THREE.LineSegments(new THREE.EdgesGeometry(coreGeo), new THREE.LineBasicMaterial({ color: SILVER, transparent: true, opacity: 0.4 }));
-  core.add(coreEdges);
+
+  const sparks = neonParticles(80, 18, [-5, 6]);
+  scene.add(sparks);
 
   const clock = new THREE.Clock();
   function tick() {
@@ -237,6 +286,7 @@ function buildAboutScene(canvas) {
       group.rotation.y += 0.0016;
       group.rotation.x = Math.sin(clock.getElapsedTime() * 0.15) * 0.12;
       core.rotation.y -= 0.003;
+      sparks.rotation.y += 0.0004;
       mouse.x += (mouse.tx - mouse.x) * 0.04;
       mouse.y += (mouse.ty - mouse.y) * 0.04;
       camera.position.x = mouse.x * 1.2;
@@ -249,21 +299,21 @@ function buildAboutScene(canvas) {
   tick();
 }
 
-/* ---------------- CONTACT: map grid + dropping pin ---------------- */
+/* ---------------- CONTACT: street grid + dropping neon pin ---------------- */
 function buildContactScene(canvas) {
   const { renderer, scene, camera, mouse } = baseSetup(canvas, { cameraZ: 12, fov: 46 });
   const group = new THREE.Group();
-  group.position.x = 6.5;
+  group.position.x = 6;
   scene.add(group);
 
-  const grid = new THREE.GridHelper(22, 26, SILVER_DEEP, 0xc7cdd6);
+  const grid = new THREE.GridHelper(24, 26, NEON_DIM, GREY);
   grid.position.y = -3;
   grid.material.transparent = true;
-  grid.material.opacity = 0.35;
+  grid.material.opacity = 0.4;
   group.add(grid);
 
   const dotsGeo = new THREE.BufferGeometry();
-  const dotCount = 60;
+  const dotCount = 70;
   const dp = new Float32Array(dotCount * 3);
   for (let i = 0; i < dotCount; i++) {
     dp[i * 3] = THREE.MathUtils.randFloatSpread(18);
@@ -271,41 +321,52 @@ function buildContactScene(canvas) {
     dp[i * 3 + 2] = THREE.MathUtils.randFloatSpread(14) - 2;
   }
   dotsGeo.setAttribute('position', new THREE.BufferAttribute(dp, 3));
-  const dots = new THREE.Points(dotsGeo, new THREE.PointsMaterial({ color: GOLD, size: 0.1, transparent: true, opacity: 0.7 }));
-  group.add(dots);
+  group.add(new THREE.Points(dotsGeo, new THREE.PointsMaterial({
+    color: NEON, size: 0.1, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false
+  })));
 
   const pinGroup = new THREE.Group();
-  const head = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), metalMat(NAVY, { roughness: 0.25 }));
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.4, 32), metalMat(NAVY, { roughness: 0.25 }));
+  const darkMat = new THREE.MeshStandardMaterial({ color: CHARCOAL, metalness: 0.75, roughness: 0.3 });
+  const head = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), darkMat);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.4, 32), darkMat);
   tip.position.y = -1.05;
   tip.rotation.x = Math.PI;
-  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), new THREE.MeshStandardMaterial({ color: SILVER, metalness: 0.9, roughness: 0.15 }));
-  inner.position.z = 0.05;
-  pinGroup.add(head, tip, inner);
+  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), new THREE.MeshBasicMaterial({ color: NEON }));
+  inner.position.z = 0.62;
+  const halo = new THREE.Mesh(
+    new THREE.TorusGeometry(1.06, 0.02, 8, 60),
+    new THREE.MeshBasicMaterial({ color: NEON, transparent: true, opacity: 0.8 })
+  );
+  pinGroup.add(head, tip, inner, halo);
   pinGroup.position.set(0, 8, 0);
   pinGroup.scale.setScalar(0.001);
   group.add(pinGroup);
 
+  // pulse ring on the ground under the pin
+  const pulse = new THREE.Mesh(
+    new THREE.RingGeometry(0.6, 0.68, 48),
+    new THREE.MeshBasicMaterial({ color: NEON, transparent: true, opacity: 0.7, side: THREE.DoubleSide })
+  );
+  pulse.rotation.x = -Math.PI / 2;
+  pulse.position.y = -2.95;
+  group.add(pulse);
+
   const clock = new THREE.Clock();
-  let dropped = false;
   function tick() {
     const t = clock.getElapsedTime();
     if (!reducedMotion) {
-      if (t > 0.4 && !dropped) {
-        dropped = true;
-      }
-      if (dropped) {
-        const dt = t - 0.4;
-        const drop = Math.min(1, dt * 1.1);
-        const ease = 1 - Math.pow(1 - drop, 3);
-        pinGroup.position.y = 8 - ease * 6.6;
-        pinGroup.scale.setScalar(Math.min(1, drop * 1.4));
-        if (drop >= 1) {
-          pinGroup.position.y = 1.4 + Math.sin(t * 1.4) * 0.15;
-        }
-      }
+      const dt = Math.max(0, t - 0.4);
+      const drop = Math.min(1, dt * 1.1);
+      const ease = 1 - Math.pow(1 - drop, 3);
+      pinGroup.position.y = 8 - ease * 6.6;
+      pinGroup.scale.setScalar(Math.min(1, drop * 1.4) || 0.001);
+      if (drop >= 1) pinGroup.position.y = 1.4 + Math.sin(t * 1.4) * 0.15;
+
+      const pt = (t % 2) / 2;
+      pulse.scale.setScalar(1 + pt * 3.2);
+      pulse.material.opacity = 0.7 * (1 - pt);
+
       group.rotation.y += 0.0011;
-      dots.rotation.y += 0.0011;
       mouse.x += (mouse.tx - mouse.x) * 0.04;
       mouse.y += (mouse.ty - mouse.y) * 0.04;
       camera.position.x = mouse.x * 1.4;
@@ -318,39 +379,14 @@ function buildContactScene(canvas) {
   tick();
 }
 
-/* ---------------- Portrait emblem (small canvas, About page) ---------------- */
-function buildPortraitScene(canvas) {
-  const { renderer, scene, camera } = baseSetup(canvas, { cameraZ: 6, fov: 40 });
-  const geo = new THREE.IcosahedronGeometry(1.9, 1);
-  const mat = new THREE.MeshStandardMaterial({ color: SILVER, metalness: 0.9, roughness: 0.18, transparent: true, opacity: 0.9 });
-  const mesh = new THREE.Mesh(geo, mat);
-  scene.add(mesh);
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.55 }));
-  mesh.add(edges);
-
-  const clock = new THREE.Clock();
-  function tick() {
-    if (!reducedMotion) {
-      const t = clock.getElapsedTime();
-      mesh.rotation.y = t * 0.28;
-      mesh.rotation.x = Math.sin(t * 0.4) * 0.25;
-    }
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
 const SCENES = {
   home: buildHomeScene,
-  listings: buildListingsScene,
+  services: buildServicesScene,
   about: buildAboutScene,
-  contact: buildContactScene,
-  portrait: buildPortraitScene
+  contact: buildContactScene
 };
 
 document.querySelectorAll('[data-hero-scene]').forEach((canvas) => {
-  const kind = canvas.getAttribute('data-hero-scene');
-  const build = SCENES[kind];
+  const build = SCENES[canvas.getAttribute('data-hero-scene')];
   if (build) build(canvas);
 });

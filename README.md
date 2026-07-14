@@ -31,7 +31,10 @@ Google Maps embed + directions, and a contact form that opens a prefilled WhatsA
 ## Content still needed from the client (before launch)
 
 - [ ] Real photos: exterior, gym floor, equipment zones, locker rooms, coaches, training action
-      → replace the `.ph` placeholder tiles (each is labeled, e.g. "Free Weights Zone")
+      → the site currently uses free-license Unsplash gym photography (hotlinked
+      `images.unsplash.com` URLs; no attribution required). Swap each `<img>` inside the
+      `.ph.has-img` tiles for the gym's own photos before launch — if any image fails to
+      load, the tile automatically falls back to its neon placeholder
 - [ ] Coach names, certifications, specialties + photos → `about.html#coaches` and homepage coach cards
 - [ ] Exact **ladies-only hours** (which 6-hour window) → currently shown as "call to confirm"
 - [ ] Exact **recovery services** offered (massage / stretching / sauna…) → `services.html#recovery`

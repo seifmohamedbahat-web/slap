@@ -404,6 +404,24 @@ h1, h2, h3, .display {
 .ph-portrait { aspect-ratio: 3 / 4; }
 .ph-wide { aspect-ratio: 16 / 9; }
 
+/* real photo inside a tile: fills the frame; falls back to the neon
+   placeholder (onerror removes .has-img) if the image can't load */
+.ph.has-img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ph.has-img::before { display: none; }
+.ph.has-img > svg { display: none; }
+.ph.has-img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(rgba(5, 5, 5, 0) 45%, rgba(5, 5, 5, 0.8));
+}
+.ph figcaption, .ph .ph-label { z-index: 2; }
+.ph.has-img { border-color: rgba(255, 255, 255, 0.14); }
+.tile.has-img img, .service-card .ph.has-img img, .coach-card .ph.has-img img, .service-media.has-img img { transition: transform 0.55s ease; }
+.tile.has-img:hover img, .service-card:hover .ph.has-img img, .coach-card:hover .ph.has-img img { transform: scale(1.06); }
+
+/* photo layer behind hero canvases */
+.hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; opacity: 0.5; }
+.page-hero .hero-photo { opacity: 0.3; }
+
 /* ---------- Services preview cards ---------- */
 .service-card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);

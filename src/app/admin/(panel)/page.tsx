@@ -73,7 +73,12 @@ export default function DashboardPage() {
     <>
       <PageHeader
         title="Dashboard"
-        description="What's happening across the DigitalOrbit site right now."
+        description={`${new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })} — what's happening across the DigitalOrbit site right now.`}
       >
         <Link href="/admin/leads" className="btn-admin">
           <Icon name="inbox" size={15} />
@@ -121,8 +126,11 @@ export default function DashboardPage() {
           </div>
           <div className="mt-1.5 flex gap-[3px]">
             {views.map((d, i) => (
-              <span key={d.day} className="flex-1 text-center text-[0.6rem] text-ink-soft">
-                {i % 2 === 1 ? d.label.split(" ")[1] : ""}
+              <span
+                key={d.day}
+                className="flex-1 text-center text-[0.58rem] whitespace-nowrap text-ink-soft"
+              >
+                {i % 2 === 1 ? d.label : ""}
               </span>
             ))}
           </div>

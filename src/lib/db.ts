@@ -182,40 +182,34 @@ function seed(db: Database.Database) {
     );
     const rows: [string, string, string, string][] = [
       [
-        "Lumen Fitness",
-        "/portfolio/lumen-fitness.svg",
-        "Membership site and booking system for a boutique gym — sign-ups grew 3× in the first quarter.",
+        "Nova IA",
+        "/portfolio/novaia.jpg",
+        "Landing page for an AI voice-agent platform — dark, product-led design built to convert visitors into sign-ups.",
         "Web Design",
       ],
       [
-        "Harvest & Co.",
-        "/portfolio/harvest-co.svg",
-        "E-commerce store for an organic food brand with subscriptions and same-day delivery zones.",
-        "E-commerce",
+        "Via Roma Ristorante",
+        "/portfolio/viaroma.jpg",
+        "Warm, elegant website for an Italian restaurant — menu, table booking, and a connected owner dashboard.",
+        "Web Design",
       ],
       [
-        "Nova Legal",
-        "/portfolio/nova-legal.svg",
-        "Complete rebrand and website for a modern law firm — identity, copy, and a client intake portal.",
-        "Branding",
-      ],
-      [
-        "Skyline Realty",
-        "/portfolio/skyline-realty.svg",
-        "Property listings platform with map search and instant viewing requests for a real-estate agency.",
+        "Via Roma Admin",
+        "/portfolio/viaroma-admin.jpg",
+        "Custom restaurant admin panel — live bookings, orders, traffic analytics, and a conversion funnel in real time.",
         "Web App",
       ],
       [
-        "Brew District",
-        "/portfolio/brew-district.svg",
-        "Brand identity and social media growth for a specialty coffee chain — 40k followers in 6 months.",
-        "Marketing",
+        "Ahlan Apparel",
+        "/portfolio/ahlan-admin.jpg",
+        "E-commerce analytics suite for a clothing brand — revenue, orders, best sellers, and traffic sources at a glance.",
+        "E-commerce",
       ],
       [
-        "PulsePay",
-        "/portfolio/pulsepay.svg",
-        "Cross-platform mobile app for a fintech startup, from wireframes to App Store launch.",
-        "App Development",
+        "VELO Sportswear",
+        "/portfolio/velo.jpg",
+        "Bold storefront for a performance sportswear brand — engineered for movement, designed for style.",
+        "E-commerce",
       ],
     ];
     rows.forEach((r, i) => insert.run(r[0], r[1], r[2], r[3], "#", i));

@@ -211,6 +211,12 @@ function seed(db: Database.Database) {
         "Bold storefront for a performance sportswear brand — engineered for movement, designed for style.",
         "E-commerce",
       ],
+      [
+        "Dental Clinic Website",
+        "/portfolio/dental-clinic.jpg",
+        "Clean, trust-building site for dental practices — doctor profile, services, reviews, and one-tap WhatsApp booking.",
+        "Web Design",
+      ],
     ];
     rows.forEach((r, i) => insert.run(r[0], r[1], r[2], r[3], "#", i));
   }

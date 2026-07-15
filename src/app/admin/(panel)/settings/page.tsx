@@ -24,7 +24,7 @@ const GROUPS: {
       {
         key: "notify_email",
         label: "Notification email",
-        placeholder: "digitaoribionsupport@gmail.com",
+        placeholder: "digitaorionsupport@gmail.com",
         type: "email",
         hint: "Every inquiry and booking is sent here with all its details.",
       },
@@ -33,7 +33,7 @@ const GROUPS: {
   {
     title: "Contact details",
     fields: [
-      { key: "contact_email", label: "Public contact email (shown on the site)", placeholder: "digitaoribionsupport@gmail.com", type: "email" },
+      { key: "contact_email", label: "Public contact email (shown on the site)", placeholder: "digitaorionsupport@gmail.com", type: "email" },
       { key: "phone", label: "Phone", placeholder: "+20 101 264 8914" },
       { key: "address", label: "Location / address", placeholder: "City, Country" },
       { key: "hours", label: "Business hours", placeholder: "Mon–Fri, 9:00–18:00" },

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const settings = getSettings();
     await sendLeadNotification(
       lead,
-      settings.notify_email || settings.contact_email || "digitaoribionsupport@gmail.com"
+      settings.notify_email || settings.contact_email || "digitaorionsupport@gmail.com"
     );
   } catch (err) {
     console.error("Lead email notification failed:", err);

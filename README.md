@@ -62,7 +62,7 @@ Public pages render fresh from the database on every request
 Contact submissions are stored as leads and appointments as bookings —
 both are always saved even if email fails. Every new inquiry and booking
 is also emailed (with all details) to the **Notification email** set in
-admin Settings (default: `digitaoribionsupport@gmail.com`).
+admin Settings (default: `digitaorionsupport@gmail.com`).
 
 Delivery uses the Resend API when `RESEND_API_KEY` is set (free tier at
 resend.com; set `EMAIL_FROM` to a sender on your verified domain). Without

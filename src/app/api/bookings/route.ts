@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     const settings = getSettings();
     await sendBookingNotification(
       booking,
-      settings.notify_email || settings.contact_email || "digitaoribionsupport@gmail.com"
+      settings.notify_email || settings.contact_email || "digitaorionsupport@gmail.com"
     );
   } catch (err) {
     console.error("Booking email notification failed:", err);

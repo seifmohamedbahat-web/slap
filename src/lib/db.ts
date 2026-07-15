@@ -322,13 +322,13 @@ function seed(db: Database.Database) {
   const settingDefaults: Record<string, string> = {
     site_name: "DigitalOrbit",
     tagline: "Websites & Digital Services",
-    contact_email: "digitaoribionsupport@gmail.com",
-    notify_email: "digitaoribionsupport@gmail.com",
+    contact_email: "digitaorionsupport@gmail.com",
+    notify_email: "digitaorionsupport@gmail.com",
     phone: "+20 101 264 8914",
     address: "Remote-first · Serving clients worldwide",
     hours: "Mon–Fri, 9:00–18:00",
     social_facebook: "https://facebook.com/digitalorbit",
-    social_instagram: "https://instagram.com/digitalorbit",
+    social_instagram: "https://www.instagram.com/digitalorbit___?igsh=dzYybDl2dXFheTIx&utm_source=qr",
     social_twitter: "https://x.com/digitalorbit",
     social_linkedin: "https://linkedin.com/company/digitalorbit",
   };

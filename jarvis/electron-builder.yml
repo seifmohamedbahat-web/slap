@@ -1,0 +1,26 @@
+appId: dev.jarvis.desktop
+productName: JARVIS
+directories:
+  output: release
+files:
+  - dist/**
+  - package.json
+asar: true
+publish:
+  provider: generic
+  url: https://updates.example.com/jarvis
+  # Point this at your update server (or switch to a GitHub provider) to
+  # enable auto-updates via electron-updater. See src/main/modules/updater.ts.
+win:
+  target:
+    - nsis
+  artifactName: ${productName}-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage

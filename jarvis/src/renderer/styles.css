@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 700px at 12% -8%, rgba(56, 189, 248, 0.1), transparent 60%),
+      radial-gradient(1000px 800px at 110% 10%, rgba(14, 165, 233, 0.08), transparent 55%),
+      #04060d;
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: rgba(56, 189, 248, 0.3);
+  }
+
+  /* Slim, glowing scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.18);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.32);
+    background-clip: padding-box;
+  }
+}
+
+@layer components {
+  .glass {
+    background: linear-gradient(
+      160deg,
+      rgba(19, 28, 51, 0.72),
+      rgba(10, 15, 30, 0.62)
+    );
+    border: 1px solid rgba(148, 178, 232, 0.12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow:
+      0 8px 32px rgba(2, 6, 16, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .glass-hover {
+    transition:
+      border-color 200ms ease,
+      transform 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .glass-hover:hover {
+    border-color: rgba(56, 189, 248, 0.35);
+    box-shadow:
+      0 12px 40px rgba(2, 6, 16, 0.6),
+      0 0 20px rgba(56, 189, 248, 0.12);
+  }
+
+  .nav-item {
+    @apply relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink-secondary transition-colors duration-150;
+  }
+  .nav-item:hover {
+    @apply text-ink-primary;
+    background: rgba(56, 189, 248, 0.08);
+  }
+  .nav-item[data-active="true"] {
+    @apply text-ink-primary;
+    background: rgba(56, 189, 248, 0.14);
+  }
+  .nav-item[data-active="true"]::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 3px;
+    border-radius: 9999px;
+    background: linear-gradient(#38bdf8, #0ea5e9);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn text-white;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.28);
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 26px rgba(56, 189, 248, 0.45);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    @apply btn text-ink-secondary;
+    background: rgba(148, 178, 232, 0.06);
+    border: 1px solid rgba(148, 178, 232, 0.12);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    @apply text-ink-primary;
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+  .btn-danger {
+    @apply btn text-white;
+    background: linear-gradient(135deg, #d03b3b, #a52020);
+  }
+
+  .input {
+    @apply w-full rounded-xl bg-abyss-900/70 px-3.5 py-2.5 text-sm text-ink-primary outline-none transition-all duration-150 placeholder:text-ink-muted;
+    border: 1px solid rgba(148, 178, 232, 0.14);
+  }
+  .input:focus {
+    border-color: rgba(56, 189, 248, 0.5);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium;
+    background: rgba(148, 178, 232, 0.08);
+    border: 1px solid rgba(148, 178, 232, 0.12);
+  }
+
+  .card-grid {
+    @apply grid gap-4;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 18px rgba(56, 189, 248, 0.5);
+  }
+  .scroll-area {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+  .drag {
+    -webkit-app-region: drag;
+  }
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: rgba(148, 178, 232, 0.06);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(148, 178, 232, 0.12),
+      transparent
+    );
+    animation: shimmer 1.4s infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

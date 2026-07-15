@@ -1,0 +1,7 @@
+{
+  "name": "Hello Plugin",
+  "version": "1.0.0",
+  "description": "A minimal example plugin. Type \"hello <name>\" in the Automation page.",
+  "author": "JARVIS",
+  "commands": ["hello"]
+}

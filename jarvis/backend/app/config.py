@@ -28,7 +28,26 @@ class Settings(BaseSettings):
     # Where the SQLite database lives. Empty = ~/.jarvis/jarvis.db
     jarvis_db_path: str = ""
 
-    # Phase 2 placeholders (voice) — unused in Phase 1.
+    # --- Voice (Phase 2) ---------------------------------------------------
+    # Start listening for the wake word automatically once models are loaded.
+    jarvis_voice_enabled: bool = True
+    # openWakeWord pretrained model name.
+    jarvis_wake_word: str = "hey_jarvis_v0.1"
+    jarvis_wake_threshold: float = 0.5
+    # faster-whisper model: tiny | base | small | medium (small is a good default)
+    jarvis_whisper_model: str = "small"
+    jarvis_whisper_language: str = "en"
+    # TTS engine: auto (ElevenLabs -> edge-tts -> pyttsx3) | elevenlabs | edge | pyttsx3 | off
+    jarvis_tts_engine: str = "auto"
+    jarvis_tts_max_chars: int = 1200
+    jarvis_edge_voice: str = "en-US-GuyNeural"
+    jarvis_elevenlabs_model: str = "eleven_flash_v2_5"
+    # Speak replies to typed messages too (voice replies are always spoken).
+    jarvis_speak_typed_replies: bool = False
+    # Global push-to-talk hotkey (Windows; needs the `keyboard` package).
+    jarvis_ptt_hotkey: str = "ctrl+shift+j"
+
+    # TTS credentials (used when the engine chain reaches ElevenLabs).
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""
 

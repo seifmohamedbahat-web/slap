@@ -4,10 +4,16 @@ export default function InputBar({
   onSend,
   onReset,
   busy,
+  voiceAvailable,
+  voiceEnabled,
+  onToggleVoice,
 }: {
   onSend: (text: string) => void;
   onReset: () => void;
   busy: boolean;
+  voiceAvailable: boolean;
+  voiceEnabled: boolean;
+  onToggleVoice: () => void;
 }) {
   const [text, setText] = useState("");
 
@@ -18,12 +24,26 @@ export default function InputBar({
     onSend(trimmed);
   };
 
+  const micTitle = !voiceAvailable
+    ? "Voice unavailable — install the voice extras (see README)"
+    : voiceEnabled
+      ? 'Listening for "hey Jarvis" — click to mute. Push-to-talk: Ctrl+Shift+J'
+      : "Click to start wake-word listening";
+
   return (
     <div className="border-t border-hud-line px-4 py-3 flex items-end gap-2">
       <button
-        disabled
-        title="Voice input arrives in Phase 2"
-        className="h-9 w-9 shrink-0 rounded-full border border-hud-line text-hud-dim/50 cursor-not-allowed"
+        disabled={!voiceAvailable}
+        onClick={onToggleVoice}
+        title={micTitle}
+        className={
+          "h-9 w-9 shrink-0 rounded-full border transition-colors " +
+          (!voiceAvailable
+            ? "border-hud-line text-hud-dim/50 cursor-not-allowed"
+            : voiceEnabled
+              ? "border-hud-accent bg-hud-accent-soft text-hud-accent"
+              : "border-hud-line text-hud-dim hover:text-hud-text")
+        }
       >
         🎙
       </button>

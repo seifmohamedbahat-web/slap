@@ -1,0 +1,12 @@
+# Voice extras (Phase 2). Install on top of requirements.txt:
+#   pip install -r requirements-voice.txt
+# The backend runs fine without these — voice just reports unavailable.
+
+numpy>=1.26
+sounddevice>=0.4.7        # mic capture (bundles PortAudio on Windows)
+openwakeword>=0.6         # local "hey jarvis" wake word
+onnxruntime>=1.17         # inference backend for openwakeword
+faster-whisper>=1.0       # local speech-to-text
+edge-tts>=6.1             # free online TTS fallback
+pyttsx3>=2.90             # offline TTS fallback (Windows SAPI5)
+keyboard>=0.13            # global Ctrl+Shift+J push-to-talk hotkey

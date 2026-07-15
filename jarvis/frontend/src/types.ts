@@ -45,3 +45,20 @@ export interface HealthInfo {
   allowed_roots: string[];
   phase: number;
 }
+
+export interface VoiceStatus {
+  type: "voice_status";
+  available: boolean;
+  enabled: boolean;
+  wake_ready: boolean;
+  stt_ready: boolean;
+  reason: string;
+}
+
+/** Events pushed over WS /api/voice/ws (voice pipeline + voice-turn agent events). */
+export type VoiceEvent =
+  | VoiceStatus
+  | { type: "voice_state"; state: "idle" | "listening" | "transcribing" | "speaking" }
+  | { type: "voice_transcript"; text: string }
+  | { type: "speak"; audio_id: string }
+  | ServerEvent;

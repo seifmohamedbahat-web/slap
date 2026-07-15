@@ -1,7 +1,7 @@
 # Jarvis — Personal AI Assistant for Windows
 
-Phase 1 (MVP skeleton): a system-tray desktop app with a dark HUD dashboard,
-text chat wired to the Claude API with tool use, and **read-only** tools:
+Phases 1–2: a system-tray desktop app with a dark HUD dashboard, text **and
+voice** chat wired to the Claude API with tool use, and **read-only** tools:
 
 - `search_files` — find files by name/pattern/size/date
 - `list_directory` — inspect a folder
@@ -34,9 +34,11 @@ cd jarvis\backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
+pip install -r requirements-voice.txt   # optional: voice (Phase 2)
 
 copy ..\.env.example .env
 # edit .env and set ANTHROPIC_API_KEY=sk-ant-...
+# optional: ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID for natural TTS
 
 uvicorn app.main:app --host 127.0.0.1 --port 8765
 ```
@@ -77,11 +79,39 @@ All settings are environment variables (see `.env.example`):
 Every model-supplied path is resolved and checked against
 `JARVIS_ALLOWED_ROOTS` before any read.
 
+## Voice (Phase 2)
+
+Say **"hey Jarvis"** (or press **Ctrl+Shift+J** push-to-talk) → the orb
+pulses while listening → your speech is transcribed **locally** with
+faster-whisper → the same Claude agent turn runs → the reply is spoken back
+and logged in the transcript. Works while the window is hidden in the tray.
+
+- **Wake word**: openWakeWord's pretrained `hey_jarvis` model — fully
+  offline, low CPU. Toggle with the mic button; models download on first run.
+- **Speech-to-text**: faster-whisper (`small` by default, `JARVIS_WHISPER_MODEL`
+  to change). Runs on CPU with int8; nothing leaves your machine. If you talk
+  before the model finishes loading, Jarvis says so instead of hanging.
+- **Text-to-speech** (`JARVIS_TTS_ENGINE=auto`): ElevenLabs when
+  `ELEVENLABS_API_KEY` is set → edge-tts (free, online) → pyttsx3
+  (offline Windows voices). Set `off` to silence Jarvis.
+- Voice is fully optional: without `requirements-voice.txt` (or a microphone)
+  the dashboard simply shows the mic as unavailable.
+
+Spec deviation, on purpose: the spec suggested Windows Speech Recognition as
+an STT fallback while whisper loads; instead Jarvis reports "still loading"
+— simpler and less surprising. ElevenLabs was added ahead of edge-tts since
+you have an ElevenLabs voice.
+
 ## Architecture notes
 
 - `POST /api/chat` streams Server-Sent Events: `text_delta`, `tool_use`,
   `tool_result`, orb `state` changes, `turn_done`. The frontend renders tool
   calls as collapsible cards in the transcript.
+- Voice events travel over `WS /api/voice/ws` (pipeline states, transcripts,
+  the same agent events, and `speak` notifications); synthesized audio is
+  served from `/api/voice/audio/{id}` and played by the webview.
+- Typed chat and voice turns share one conversation history and one turn
+  lock (`backend/app/conversation.py`), so Jarvis has a single memory.
 - The agent loop (`backend/app/agent.py`) streams each model response,
   executes tool calls locally, returns all results in a single user message,
   and repeats until Claude finishes (handles `pause_turn`; caps tool rounds).
@@ -90,8 +120,8 @@ Every model-supplied path is resolved and checked against
 
 ## Roadmap
 
-- **Phase 2** — wake word, local STT (faster-whisper), TTS, push-to-talk,
-  orb voice states
+- **Phase 2** — ✅ wake word, local STT (faster-whisper), TTS chain,
+  push-to-talk, orb voice states
 - **Phase 3** — safe file/app control: move/rename/organize with undo log +
   dry-run previews, app launching, screenshots
 - **Phase 4** — full-control tier: shell commands with confirmation flow,

@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@theme {
+  /* DigitalOrbit brand palette */
+  --color-brand: #6d5ef2;
+  --color-brand-dark: #574ad4;
+  --color-brand-light: #9187f6;
+  --color-brand-faint: #efedfe;
+  --color-accent: #22d3ee;
+  --color-accent-dark: #0eb3cd;
+  --color-ink: #1c1b2e;
+  --color-ink-soft: #55546e;
+  --color-mist: #f6f7fb;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-poppins), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 6px 24px -6px rgb(28 27 46 / 0.08), 0 2px 6px -2px rgb(28 27 46 / 0.05);
+  --shadow-card-hover: 0 18px 40px -12px rgb(109 94 242 / 0.28), 0 4px 12px -4px rgb(28 27 46 / 0.08);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-orbit: orbit-spin 22s linear infinite;
+  --animate-orbit-reverse: orbit-spin-reverse 34s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+  @keyframes orbit-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes orbit-spin-reverse {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white font-sans text-ink antialiased;
+}
+
+/* Anchored sections shouldn't hide under the sticky navbar */
+section[id] {
+  scroll-margin-top: 88px;
+}
+
+/* ------------------------------ scroll reveal ----------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-float,
+  .animate-float-slow,
+  .animate-orbit,
+  .animate-orbit-reverse {
+    animation: none;
+  }
+}
+
+@layer components {
+/* ------------------------------- typography ------------------------------- */
+
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-brand) 10%, var(--color-accent) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ------------------------------ form controls ----------------------------- */
+
+.field {
+  @apply w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm text-ink placeholder:text-ink/35 transition focus:border-brand focus:ring-2 focus:ring-brand/25 focus:outline-none;
+}
+
+.field-label {
+  @apply mb-1.5 block text-xs font-semibold tracking-wide text-ink-soft uppercase;
+}
+
+/* form control on dark (booking section) surfaces */
+.booking-field {
+  @apply w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 transition focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none;
+}
+
+/* --------------------------------- buttons -------------------------------- */
+
+.btn-primary {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition duration-200 hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-xl hover:shadow-brand/35 active:translate-y-0;
+}
+
+.btn-ghost {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-ink/15 bg-white/70 px-6 py-3 text-sm font-semibold text-ink backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:text-brand active:translate-y-0;
+}
+
+.btn-dark-ghost {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/20 active:translate-y-0;
+}
+
+/* ---------------------------- admin panel bits ---------------------------- */
+
+.admin-card {
+  @apply rounded-2xl border border-ink/8 bg-white p-6 shadow-card;
+}
+
+.btn-admin {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark;
+}
+
+.btn-admin-ghost {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-ink/15 bg-white px-3 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-brand/40 hover:text-brand;
+}
+
+.btn-admin-danger {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50;
+}
+}

@@ -1,0 +1,24 @@
+# Core
+python-dotenv        # .env secrets loading
+PyYAML               # config.yaml settings
+numpy                # audio buffers
+
+# LLM providers (install the ones you use; anthropic is the default brain)
+anthropic            # Claude — primary provider
+openai               # optional secondary cloud provider
+requests             # Ollama HTTP client (local fallback)
+
+# Voice pipeline
+openwakeword         # wake word — ships a pretrained "hey jarvis" model, free & local
+faster-whisper       # local speech-to-text
+edge-tts             # free Microsoft neural TTS (en-GB-RyanNeural = British male)
+elevenlabs           # optional premium TTS (needs ELEVENLABS_API_KEY)
+sounddevice          # microphone capture
+pygame               # audio playback (plays the synthesized mp3s)
+
+# Computer control
+pyautogui            # screenshots (mouse/keyboard later phases)
+psutil               # process management (close apps)
+
+# Development
+pytest

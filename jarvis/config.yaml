@@ -1,0 +1,34 @@
+# Jarvis settings (non-secret). Secrets go in .env — see .env.example.
+# Every key here is optional; defaults are defined in jarvis/config.py.
+
+llm:
+  provider: auto            # anthropic | openai | ollama | auto
+  anthropic_model: claude-opus-4-8
+  openai_model: gpt-4o
+  ollama_model: llama3.1
+  ollama_url: http://localhost:11434
+  effort: low               # low = snappy voice replies; medium/high = deeper reasoning
+  max_tokens: 4096
+
+voice:
+  tts: edge                 # edge (free, no key) | elevenlabs
+  edge_voice: en-GB-RyanNeural   # British male; try en-GB-ThomasNeural too
+  edge_rate: "+0%"
+  elevenlabs_voice: Daniel
+  elevenlabs_model: eleven_turbo_v2_5
+
+wake_word:
+  engine: openwakeword
+  model: hey_jarvis
+  threshold: 0.55           # raise if false triggers, lower if it misses you
+
+stt:
+  model_size: base.en       # tiny.en = fastest, small.en = more accurate
+  device: cpu               # set to cuda if you have an NVIDIA GPU
+  compute_type: int8
+  silence_seconds: 1.2
+  max_command_seconds: 15
+  rms_threshold: 0.015      # mic energy gate; raise in noisy rooms
+
+# Phase 5: MCP servers registered here become available to Jarvis on restart.
+mcp_servers: []
